@@ -1,0 +1,1458 @@
+den = "\33[1;90m"
+luc = "\33[1;32m"
+trang = "\33[1;37m"
+red = "\33[1;31m"
+vang = "\33[1;33m"
+bulong = "\33[1;35m"
+lamd = "\33[1;34m"
+lam = "\33[1;36m"
+purple = "\e[35m"
+hong = "\33[1;95m"
+#API
+from builtins import all,exec,input,len,print,round,int,list,map,range,str,open
+exec('')
+import requests,json,random
+import uuid,re,os,sys
+from bs4 import BeautifulSoup
+class Facebook_Api(object):
+	def __init__(self,cookie):
+		self.cookie=cookie
+		self.headers={'authority':'mbasic.facebook.com','cache-control':'max-age=0','sec-ch-ua':'"Google Chrome";v="93", " Not;A Brand";v="99", "Chromium";v="93"','sec-ch-ua-mobile':'?0','sec-ch-ua-platform':'"Windows"','upgrade-insecure-requests':'1','origin':'https://mbasic.facebook.com','content-type':'application/x-www-form-urlencoded','user-agent':'Mozilla/5.0 (Windows NT 6.3; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/93.0.4577.82 Safari/537.36','accept':'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9','sec-fetch-site':'same-origin','sec-fetch-mode':'navigate','sec-fetch-user':'?1','sec-fetch-dest':'document','referer':'https://mbasic.facebook.com/','accept-language':'en-US,en;q=0.9','cookie':cookie}
+	def get_thongtin(self):
+		try:
+			home=requests.get('https://mbasic.facebook.com/profile.php',headers=self.headers).text
+			self.fb_dtsg=home.split('<input type="hidden" name="fb_dtsg" value="')[1].split('"')[0]
+			self.jazoest=home.split('<input type="hidden" name="jazoest" value="')[1].split('"')[0]
+			ten=home.split('<title>')[1].split('</title>')[0]
+			self.user_id=self.cookie.split('c_user=')[1].split(';')[0]
+			return ten,self.user_id
+		except:
+			return 0
+	def follow(self,id):
+		data={'av':self.user_id,'__user':self.user_id,'__a':'1','__dyn':'7AzHxqUW13xt0mUyEqxenFwLBwopU98nwgU765QdwSxucyU8EW1twYwJyEiwsobo6u3y4o11U2nwb-q7oc81xoswIK1Rwwwg8a8465o-cwfG12wOKdwGxu782lwv89kbxS2218wc61uwZwlo5qfK0zEkxe2GewyDwsoqBwJK2W5olwUwgojUlDw-wSU72m7-8wywdG7FobpEbUGdwb6223908O3216AzUjwTwNxe6Uak1xwJwxw','__csr':'hcp2vsTfcyBblX4JmmZOiFYKx7KWi_qT9jkxbOfKAAlXWmHGGlq8kNsOVanp9WDQKEHXKRWGulGhaAHHy8VeiWGuUGVoyQUFaui54cCHpp-WCxqHyV9qyUx153qzoWE8ql3pEG4p8pyVGCyooCxe5ojBy98aHG4Eb8mG269Vby8be4oGUO9whXxa2q2q49okyoy26q1BwYxe4E6W10y88E467Erzo6-2y5Etxl3UO2GWwaeu3-7o7uaw922t08K026O03iuC04f802PRw4bw2v80za0G80B-0b-e09dBw0Uww2DOw0jP80n7g3Iw1k208bzE1lU8E','__req':'5','__hs':'9362.HYP:comet_pkg.2.1.0.2.1','dpr':'2','__ccg':'GOOD','__rev':'1006788684','__s':'p2x8mf:qj6dvy:bj8e46','__hsi':'7185171904183015509','__comet_req':'15','fb_dtsg':self.fb_dtsg,'jazoest':self.jazoest,'lsd':'afdisHHGuglOo_hNSDt3Fb','__aaid':'775223720487728','__spin_r':'1006788684','__spin_b':'trunk','__spin_t':'1672928199','fb_api_caller_class':'RelayModern','fb_api_req_friendly_name':'CometUserFollowMutation','variables':'{"input":{"attribution_id_v2":"ProfileCometTimelineListViewRoot.react,comet.profile.timeline.list,via_cold_start,1672928202199,140922,190055527696468,","subscribe_location":"PROFILE","subscribee_id":"'+id+'","actor_id":"'+self.user_id+'","client_mutation_id":"1"},"scale":2}','server_timestamps':'true','doc_id':'5032256523527306',}
+		headers={'Host':'www.facebook.com','sec-ch-ua':'"Chromium";v="107", "Not=A?Brand";v="24"','sec-ch-ua-mobile':'?0','user-agent':'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36','viewport-width':'980','content-type':'application/x-www-form-urlencoded','x-fb-lsd':'afdisHHGuglOo_hNSDt3Fb','x-fb-friendly-name':'CometUserFollowMutation','sec-ch-prefers-color-scheme':'dark','sec-ch-ua-platform':'"Linux"','accept':'*/*','origin':'https://www.facebook.com','sec-fetch-site':'same-origin','sec-fetch-mode':'cors','sec-fetch-dest':'empty','referer':'https://www.facebook.com/'+id,'accept-language':'vi-VN,vi;q=0.9,fr-FR;q=0.8,fr;q=0.7,en-US;q=0.6,en;q=0.5','cookie':self.cookie}
+		try:
+			fl=requests.post('https://www.facebook.com/api/graphql/',headers=headers,data=data)
+			if 'IS_SUBSCRIBED' in fl.text:
+				return True
+			else:
+				return fl
+		except:
+			return False 
+	def page(self,id):
+		data={'av':self.user_id,'__user':self.user_id,'__a':'1','__dyn':'7AzHxqU5a5Q1ryaxG4VuC0BVU98nwgU765QdwSwAyU8EW0CEboG4E762S1DwUx60gu0BU2_CxS320om78bbwto88422y11xmfz83WwgEcHzoaEnxO0Bo7O2l2Utwwwi831wiEjwZwlo5qfK0zEkxe2GewGwkUtxGm2SUbElxm3y11xfxmu3W2i4U72m7-8wywfCm2Sq2-azo2NwwwOg2cwMwhF8-4UdUcojxK2B0oobo8o','__csr':'g8JNc9n2tWr5W4til-I_On8J9rshlR8nZFiELH_Hnij4JfOJLOGiLoxLBlGRuZaGF4CZddQ4L_JfCiDKWVryuiqqFAcy8x6CBtqJkF8ZVExauAbgOtLAG5FUGFptxqfxi4Hzaz8CQ2SaxC9xCi48Wqqq11g8EaoS9g9U4m224oG68sGucx68wyg6G22mfxa4Xxq7EKbwi82LwNxu48c814EC2K3O5U-2WEhCxO1EwioeUiwiE6e3HwTw18C02k-0exw0deO0jV05Swe20bTw5_w1zF03I202po6e07Co0K6Zlw0jjo0E-0qW08ug8UhBw21e0fLw5Ww9K0Z86u','__req':'o','__hs':'19363.HYP:comet_pkg.2.1.0.2.1','dpr':'2','__ccg':'GOOD','__rev':'1006793331','__s':'v80lqo:poayhk:qxdcmk','__hsi':'7185553908092803679','__comet_req':'15','fb_dtsg':self.fb_dtsg,'jazoest':self.jazoest,'lsd':'V64c7kKr5hAtzX2IIDgKp8','__aaid':'775223720487728','__spin_r':'1006793331','__spin_b':'trunk','__spin_t':'1673017141','fb_api_caller_class':'RelayModern','fb_api_req_friendly_name':'CometPageLikeCommitMutation','variables':'{"input":{"attribution_id_v2":"CometSinglePageHomeRoot.react,comet.page,via_cold_start,1673017144344,576155,250100865708545,","is_tracking_encrypted":true,"page_id":"'+id+'","source":"unknown","tracking":[],"actor_id":"'+self.user_id+'","client_mutation_id":"1"},"isAdminView":false}','server_timestamps':'true','doc_id':'5491200487600992',}
+		headers={'Host':'www.facebook.com','sec-ch-ua':'"Chromium";v="107", "Not=A?Brand";v="24"','sec-ch-ua-mobile':'?0','user-agent':'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36','viewport-width':'980','content-type':'application/x-www-form-urlencoded','x-fb-lsd':'V64c7kKr5hAtzX2IIDgKp8','x-fb-friendly-name':'CometPageLikeCommitMutation','sec-ch-prefers-color-scheme':'dark','sec-ch-ua-platform':'"Linux"','accept':'*/*','origin':'https://www.facebook.com','sec-fetch-site':'same-origin','sec-fetch-mode':'cors','sec-fetch-dest':'empty','referer':'https://www.facebook.com/'+id,'accept-language':'vi-VN,vi;q=0.9,fr-FR;q=0.8,fr;q=0.7,en-US;q=0.6,en;q=0.5','cookie':self.cookie}
+		try:
+			page=requests.post('https://www.facebook.com/api/graphql/',headers=headers,data=data)
+			if 'FOLLOW' in page.text:
+				return True
+			else:
+				return page.text
+		except:
+			return False
+	def group(self,id):
+			headers={'Host':'www.facebook.com','sec-ch-ua':'"Not?A_Brand";v="8", "Chromium";v="108", "Google Chrome";v="108"','sec-ch-ua-mobile':'?0','user-agent':'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36','viewport-width':'980','content-type':'application/x-www-form-urlencoded','x-fb-lsd':'gKT7R4dxIBjI4wUDUP5ivT','x-fb-friendly-name':'GroupCometJoinForumMutation','sec-ch-prefers-color-scheme':'dark','sec-ch-ua-platform':'"Linux"','accept':'*/*','origin':'https://www.facebook.com','sec-fetch-site':'same-origin','sec-fetch-mode':'cors','sec-fetch-dest':'empty','referer':'https://www.facebook.com/groups/'+id+'/','accept-language':'vi-VN,vi;q=0.9,fr-FR;q=0.8,fr;q=0.7,en-US;q=0.6,en;q=0.5','cookie':self.cookie}
+			data={'av':self.user_id,'__user':self.user_id,'__a':'1','__dyn':'7AzHJ16U9ob8ng5K8G6EjBWo2nDwAxu13wsongS3q2ibwyzE2qwJyEiwsobo6u3y4o2Gwfi0LVEtwMw65xO321Rwwwg8a8465o-cwfG12wOKdwGxu782lwv89kbxS2218wc61axe3S1lwlE-U2exi4UaEW2G1jxS6FobrwKxm5oe8464-5pUfEe88o4Wm7-8xmcwfCm2CVEbUGdG1Fwh888cA0z8c84qifxe3u364UrwFg662S26','__csr':'gadNAIYllhsKOE8IpidFPhcIx34Omy9-O9OO8hZ_8-kAymHGAybJqGlvmWl7nWBWJ7GqaXHz7GFe9oy_KBl7h6h4KVah94QeKVHACDyryqKdF5GuXXBCgNpbJ5jjGm8yQEWrCixl6xWuiih5yo-8wAy84mq4poN0Vzbxe16whAufgO5U8UKi4Eyu4EjwGK78527o8411wgocU5u1MwSwFyU8Uf8igaElw8e9xK2GewNgy5o5m1nDwLwrokm16www8G03cy0arw0Zyw0aaC0mG0eJzl8ow2Jw6tw44w4uzo045W1UgSeg0z-07X81-E0cNo0By1Wwi8fE0lYw2h81a8gw9u','__req':'k','__hs':'19363.HYP:comet_pkg.2.1.0.2.1','dpr':'2','__ccg':'EXCELLENT','__rev':'1006794317','__s':'gtlvj8:fxbzro:f2kk19','__hsi':'7185658639628512803','__comet_req':'15','fb_dtsg':self.fb_dtsg,'jazoest':self.jazoest,'lsd':'gKT7R4dxIBjI4wUDUP5ivT','__aaid':'1576489885859472','__spin_r':'1006794317','__spin_b':'trunk','__spin_t':'1673041526','fb_api_caller_class':'RelayModern','fb_api_req_friendly_name':'GroupCometJoinForumMutation','variables':'{"feedType":"DISCUSSION","groupID":"'+id+'","imageMediaType":"image/x-auto","input":{"action_source":"GROUP_MALL","attribution_id_v2":"CometGroupDiscussionRoot.react,comet.group,via_cold_start,1673041528761,114928,2361831622,","group_id":"'+id+'","group_share_tracking_params":{"app_id":"2220391788200892","exp_id":"null","is_from_share":false},"actor_id":"'+self.user_id+'","client_mutation_id":"1"},"inviteShortLinkKey":null,"isChainingRecommendationUnit":false,"isEntityMenu":true,"scale":2,"source":"GROUP_MALL","renderLocation":"group_mall","__relay_internal__pv__GroupsCometEntityMenuEmbeddedrelayprovider":true,"__relay_internal__pv__GlobalPanelEnabledrelayprovider":false}','server_timestamps':'true','doc_id':'5853134681430324','fb_api_analytics_tags':'["qpl_active_flow_ids=431626709"]',}
+			try:
+				join=requests.post('https://www.facebook.com/api/graphql/',headers=headers,data=data).text
+				if self.user_id in join:
+					return True
+				else:
+					return join
+			except:
+				return False 
+	def reac_cmt(self,id,type_react):
+		access=''
+		url=requests.get('https://mbasic.facebook.com/'+id,headers=self.headers,proxies='').url
+		if id in url:
+			return False
+		index=1 if type_react=='LIKE' else 2 if type_react=='LOVE' else 3 if type_react=='CARE' else 4 if type_react=='HAHA' else 5 if type_react=='WOW' else 6 if type_react=='SAD' else 7
+		access=requests.get(url,headers=self.headers).text
+		while True:
+			if id in access:
+				find_cmt=access.split(id)[1].split('</a></span></span>')[0].split('/reactions/picker/?')[1].split('"')[0].replace('amp;','')
+				access=requests.get('https://mbasic.facebook.com/reactions/picker/?'+find_cmt,headers=self.headers).text
+				ufi=access.split('/ufi/reaction/?')
+				hoan_thanh=requests.get('https://mbasic.facebook.com/ufi/reaction/?'+ufi[index].split('"')[0].replace('amp;',''),headers=self.headers).text
+				return True
+			else:
+				if '/comment/replies/' in url:
+					xemthemcmt=access.split('/comment/replies/?')[1].split('"')[0].replace('amp;','')
+					access=requests.get('https://mbasic.facebook.com/comment/replies/?'+xemthemcmt,headers=self.headers).text
+				else:
+					xemthemcmt=access.split('/story.php?')[1].split('</a></div></div>')[0].replace('amp;','').split('"')[0]
+					access=requests.get('https://mbasic.facebook.com/story.php?'+xemthemcmt,headers=self.headers).text
+	def like(self,id,type):
+		if '_' in id:
+			uid=id.split('_')[1]
+		else:
+			uid=id
+		list={'LIKE':1,'LOVE':2,'CARE':3,'HAHA':4,'WOW':5,'SAD':6,'ANGRY':7}
+		headers={
+		      'authority':'mbasic.facebook.com',
+		      'accept':'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
+		      'content-type':'application/x-www-form-urlencoded',
+		      'sec-ch-ua-mobile':'?0',
+		      'sec-ch-ua-platform':'"Windows"',
+		      'sec-fetch-dest':'document',
+		      'sec-fetch-mode':'navigate',
+		      'sec-fetch-site':'none',
+		      'sec-fetch-user':'?1',
+		      'upgrade-insecure-requests':'1',
+		      'accept-language':'vi,vi-VN;q=0.9,fr-FR;q=0.8,fr;q=0.7,en-US;q=0.6,en;q=0.5,zh-CN;q=0.4,zh;q=0.3',
+		      'cookie':self.cookie
+}
+		try:
+			link='https://mbasic.facebook.com/reactions/picker/?ft_id='+uid
+			data=requests.get(link,headers=self.headers).text
+			get=data.split('<a href="')
+			cx=get[list[type]].split('" style="display:block">')[0].replace('amp;','').replace(';','&')
+			reac=requests.get('https://mbasic.facebook.com'+cx,headers=self.headers).text
+			return True
+		except:
+			return False 
+	def comment(self,id,msg):
+		try:
+			url=requests.get('https://mbasic.facebook.com/'+id,headers=self.headers).url
+			access=requests.get(url,headers=self.headers).text
+			cmt=re.findall(r'\/a\/comment.php\?fs=.*?"',access)
+			if cmt==[]:return False
+			hoan_thanh=requests.post('https://mbasic.facebook.com%s'%cmt[0].replace('"','').replace('amp;',''),headers=self.headers,data={'fb_dtsg':self.fb_dtsg,'jazoest':self.jazoest,'comment_text':msg}).text
+			return hoan_thanh
+		except:
+			return False
+	def share(self,id,nd):
+		try:
+			url=requests.get('https://mbasic.facebook.com/'+id,headers=self.headers).url
+			ac=requests.get(url,headers=self.headers).text
+			node_share=re.findall(r'\/composer\/mbasic\/\?c_src=share.*?"',ac)
+			if node_share==[]:
+				return False
+			truycapshare=ac.split('/composer/mbasic/?c_src=share')[1].split('"')[0].replace('amp;','')
+			ac=requests.get('https://mbasic.facebook.com/composer/mbasic/?c_src=share'+truycapshare,headers=self.headers).text
+			fb=ac.split('name="fb_dtsg" value="')[1].split('"')[0]
+			jaz=ac.split('name="jazoest" value="')[1].split('"')[0]
+			target=ac.split('name="target" value="')[1].split('"')[0]
+			csid=ac.split('name="csid" value="')[1].split('"')[0]
+			privacyx=ac.split('name="privacyx" value="')[1].split('"')[0]
+			sid=ac.split('name="sid" value="')[1].split('"')[0]
+			data={
+			        'fb_dtsg':fb,
+			         'jazoest':jaz,
+			         'at':'',
+			         'target':target,
+			         'csid':csid,
+			         'c_src':'share',
+			         'referrer':'feed',
+			         'ctype':'advanced',
+			         'cver':'amber_share',
+			         'users_with':'',
+			         'album_id':'',
+			         'waterfall_source':'advanced_composer_timeline',
+			         'privacyx':privacyx,
+			         'appid':'0',
+			         'sid':sid,
+			         'linkUrl':'',
+			         'm':'self',
+			         'xc_message':nd,
+			         'view_post':'Chia sẻ',
+			         'shared_from_post_id':sid,
+			}
+			share=ac.split('/composer/mbasic/?csid=')[2].split('"')[0].replace('amp;','')
+			hoan_thanh=requests.post('https://mbasic.facebook.com/composer/mbasic/?csid='+share,headers=self.headers,data=data).text
+			return True
+		except:
+			return False 
+class TraoDoiSub_Api(object):
+	def __init__(self,token):
+		self.token=token
+	def main(self):
+		try:
+			main=requests.get('https://traodoisub.com/api/?fields=profile&access_token='+self.token).json()
+			try:
+				return main['data']
+			except:
+				False
+		except:
+			return False 
+	def run(self,id):
+		try:
+			run=requests.get(f'https://traodoisub.com/api/?fields=run&id={id}&access_token={self.token}').json()
+			try:
+				run['data']['id']
+				return True
+			except:
+				return False
+		except:
+			return False
+	def get_job(self,type):
+		try:
+			get=requests.get(f'https://traodoisub.com/api/?fields={type}&access_token={self.token}',headers={'user-agent':'Mozilla/5.0 (Windows NT 6.3; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/93.0.4577.82 Safari/537.36'})
+			return get
+		except:
+			return False 
+	def nhan_xu(self,type,id):
+		try:
+			nhan=requests.get(f'https://traodoisub.com/api/coin/?type={type}&id={id}&access_token={self.token}',headers={'user-agent':'Mozilla/5.0 (Windows NT 6.3; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/93.0.4577.82 Safari/537.36'}).json()
+			try:
+				xu=nhan['data']['xu']
+				msg=nhan['data']['msg']
+				return msg,xu
+			except:
+				return nhan
+		except:
+			return False
+# Đánh dấu bản quyền
+thanh_xau= trang + "~" + red + "[" + vang+ "⟨⟩" + red + "] " + trang + "➩ "
+thanh_dep= trang + "~" + red + "[" + luc + "✓" + red + "] " + trang + "➩ "
+##### Cài Thư Viện #####
+import requests, json, os, sys
+try:
+        import mechanize
+except:
+        os.system("pip install mechanize")
+        import mechanize
+import os ,json ,sys ,requests 
+from sys import platform 
+from time import sleep 
+from datetime import datetime 
+from random import randint 
+from pystyle import Add, Center, Anime, Colors, Colorate, Write, System
+banners=f"""                         Trao Doi Sub -- Cookies  """
+thongtins=f"""       """
+
+def banner():
+        print('\33[0m',end='')
+        os.system('clear')
+        a=Colorate.Horizontal(Colors.green_to_cyan, banners)
+        for i in range(len(a)):
+                sys.stdout.write(a[i])
+                sys.stdout.flush()
+                sleep(0.0000000000000000000001)
+        print()
+        
+class O0O0OO0OO0OOOOO00 :
+    def __init__ (O00O000OOO0OO0000 ):
+        O00O000OOO0OO0000 .__OO000O0O000000O0O ()
+        O00O000OOO0OO0000 .__OO0O0OO0O00OO00OO ()
+        O00O000OOO0OO0000 .__OO0O00O00000O0000 ()
+        O00O000OOO0OO0000 .__OO0000O0O0O00O0O0 ()
+        O00O000OOO0OO0000 .__OO0O00O00OO00OOO0 ()
+    def __OO000O0O000000O0O (O0OO0O00000OOOOOO ,O0O0O00000OOO00OO ,OOO000000OO0OO000 ,OOOOOO0OO00OOOOOO ,O00OOOO000O0O0O00 ,OO000OO00O00OO00O ,OO0OOOOOOOO0000OO ,O0O0O00O0O0OOO00O ):
+        return O0OO0O00000OOOOOO .__OO0O00O00000O0000 ()
+    def __OO0O0OO0O00OO00OO (O00OO0O0OO000O0OO ,OO00OOO0O00O000O0 ,O0O0O000O00O0O000 ):
+        return O00OO0O0OO000O0OO .__OO0O00O00000O0000 ()
+    def __OO0O00O00000O0000 (OO0O000O000O000OO ,O000O00O0OOOO0OOO ,OO0O0O00O00OOOO0O ,O00OOO00O00OO0OO0 ):
+        return OO0O000O000O000OO .__OO0O00O00000O0000 ()
+    def __OO0000O0O0O00O0O0 (OO000OO00O0OO000O ,OOO0O00OOO0OO0O0O ,OOO0OO0OOO000000O ,OOO00OO0O000O0OO0 ):
+        return OO000OO00O0OO000O .__OO0000O0O0O00O0O0 ()
+    def __OO0O00O00OO00OOO0 (O0O0O0OO0OOO0000O ,OOO0O0000O0OOO000 ,O000000O0O0OO0O00 ,O00O0OO00OO00O0OO ,OOO000OOO0OOO00O0 ,O00O0OO00O0000OO0 ):
+        return O0O0O0OO0OOO0000O .__OO0O00O00000O0000 ()
+class O00000000000000OO :
+    def __init__ (O000OO0O0O0OO0000 ):
+        O000OO0O0O0OO0000 .__O000O0O0OOO0OO0OO ()
+        O000OO0O0O0OO0000 .__OO00OOOOOOO0O0000 ()
+        O000OO0O0O0OO0000 .__OOOO0000O00OOOOO0 ()
+        O000OO0O0O0OO0000 .__O0OO0OO0O0OOOOOO0 ()
+        O000OO0O0O0OO0000 .__O0O0OOOO00OOO0000 ()
+        O000OO0O0O0OO0000 .__OOOO00000O0OO0000 ()
+        O000OO0O0O0OO0000 .__OO0OO0OOOO00OOO00 ()
+        O000OO0O0O0OO0000 .__O0OO0OO000O0OO0OO ()
+        O000OO0O0O0OO0000 .__O0OOO0OO0O00OO0OO ()
+        O000OO0O0O0OO0000 .__OOOOOO0O0OOO00OO0 ()
+        O000OO0O0O0OO0000 .__O00OO000OOO0OO0O0 ()
+        O000OO0O0O0OO0000 .__OO0OOO0O0O0OO0O00 ()
+        O000OO0O0O0OO0000 .__O0OO0O00OO00OO0OO ()
+        O000OO0O0O0OO0000 .__O0O00O000OO00OOOO ()
+    def __O000O0O0OOO0OO0OO (O00O0OO00O000O0OO ,OO0O0O0O0O0O0000O ,OOO0O0OOO0OOOOOOO ,O0O00000O0O0O0OO0 ,OO00000O0OO0OOOOO ,O0O00OO000O0000O0 ,O0O000000O0OO0OO0 ):
+        return O00O0OO00O000O0OO .__OOOO0000O00OOOOO0 ()
+    def __OO00OOOOOOO0O0000 (O00000OOO00O0OO0O ,OOOO00O00O00OOOOO ,OOO0000O0OO0O00OO ,OO000OO0O000OO000 ,O00O0O0OOO0000O0O ):
+        return O00000OOO00O0OO0O .__OO0OO0OOOO00OOO00 ()
+    def __OOOO0000O00OOOOO0 (OOOO0O0O0O0O00OOO ,O0OOOOO0OO0O00O00 ,OOO0OO0O0O0OO000O ,O00OOOO00OO00000O ):
+        return OOOO0O0O0O0O00OOO .__O0OO0OO0O0OOOOOO0 ()
+    def __O0OO0OO0O0OOOOOO0 (O0000OOOOOO00000O ,OO0OO00O00000O0OO ,O0000000OO0OO00O0 ,OO0O0O00O0O0000O0 ,OOO0O000O00OO0000 ,O0OOO00O0O00O00O0 ):
+        return O0000OOOOOO00000O .__OOOOOO0O0OOO00OO0 ()
+    def __O0O0OOOO00OOO0000 (OOOOOOO0OOO0OOOOO ,O0O0OO00O0OO0OOOO ,OOOOO0000OO0OOOOO ):
+        return OOOOOOO0OOO0OOOOO .__O0OO0O00OO00OO0OO ()
+    def __OOOO00000O0OO0000 (O0000O0O0O000000O ,OOO0OO0000000O000 ,OO0OOOOO0O00O000O ,OOOO0O0000O000O0O ,OO000OOOO0OOOO0O0 ):
+        return O0000O0O0O000000O .__O0OO0OO000O0OO0OO ()
+    def __OO0OO0OOOO00OOO00 (O0000000O0O000O00 ,O00OOOO000O0O00O0 ,OO00OOOO000O0O00O ,OO00OO00O0OOOO0OO ,O0O0OO00O000O0O00 ,OOOO00OOOOO0OOOOO ,O0O000O0OO00OO0OO ,O0O0OO0O0O0O0O0O0 ):
+        return O0000000O0O000O00 .__OO0OO0OOOO00OOO00 ()
+    def __O0OO0OO000O0OO0OO (O0OO0O000O00O0O0O ,O0O0OO0OO000O0OO0 ):
+        return O0OO0O000O00O0O0O .__OO0OO0OOOO00OOO00 ()
+    def __O0OOO0OO0O00OO0OO (O00OO0OO0000O0O00 ,O0O000OO0OO00000O ,OO0OO0OO000OO0O00 ,O0OO0000OO0O00O0O ,O0OOOO0OOOO000O0O ):
+        return O00OO0OO0000O0O00 .__OO0OOO0O0O0OO0O00 ()
+    def __OOOOOO0O0OOO00OO0 (OOO0O0OOOOOOOOO00 ,O0000O0O00O0OOO0O ,OOO00O0OO0OOOO0O0 ,OOOOO00O0OO0OO0O0 ,OOO0O0O00O0O0000O ):
+        return OOO0O0OOOOOOOOO00 .__O0OO0O00OO00OO0OO ()
+    def __O00OO000OOO0OO0O0 (O0OO00OO00OO0O0OO ,O000OO0O00O000000 ):
+        return O0OO00OO00OO0O0OO .__O0OO0OO0O0OOOOOO0 ()
+    def __OO0OOO0O0O0OO0O00 (O0OO0000OOO0OOOO0 ,OOOOOO0O00OO0O00O ,OOO0000O0O00O0OO0 ,O0OOOO00O0OO0OO00 ,OO00O0O0000000O00 ):
+        return O0OO0000OOO0OOOO0 .__O0OOO0OO0O00OO0OO ()
+    def __O0OO0O00OO00OO0OO (OOOO0000O000O0O00 ,O00OO0O00OO00O0O0 ,O00O0OO00O000OO00 ,O0O0OO0O0OOOO00O0 ,O0OO000OO0O000O00 ,O0O0O0O0O0OOOO00O ):
+        return OOOO0000O000O0O00 .__OOOO00000O0OO0000 ()
+    def __O0O00O000OO00OOOO (OO0OOOO0OO00O00OO ,OOOOO0000O0O00OO0 ,O000OO0OO0OOO0O0O ,OO0OOO0000O0O0OOO ,OO000O0OO00O000O0 ,OO000OOOO000OO0OO ,O0OOOO000OO0O0000 ,O00OOO0OO000OO00O ):
+        return OO0OOOO0OO00O00OO .__OOOOOO0O0OOO00OO0 ()
+class OO0OO0O0O00O0O0O0 :
+    def __init__ (O0O00O0O0OO0O0OO0 ):
+        O0O00O0O0OO0O0OO0 .__OOO0000O0000OO00O ()
+        O0O00O0O0OO0O0OO0 .__O000OO0O00OOOOOO0 ()
+        O0O00O0O0OO0O0OO0 .__OOOO0O0O000OOO00O ()
+        O0O00O0O0OO0O0OO0 .__O0O000O000OOOOO0O ()
+        O0O00O0O0OO0O0OO0 .__O0O000O0O000OO000 ()
+    def __OOO0000O0000OO00O (O00O0O0O0O00OOOOO ,OOO000O0O0O00OO0O ,O0O0OOO0OO0OO0000 ,O00OOOOO00OOO000O ,O000OO0O000O0O0O0 ,OO0OOO0OO0000O0OO ):
+        return O00O0O0O0O00OOOOO .__O0O000O000OOOOO0O ()
+    def __O000OO0O00OOOOOO0 (OOO0OO0OO000OO000 ,O0O000O0OO000000O ,OOO0OOO0OO0000O0O ,O000O0OO0OO000000 ,O0OOO000OO00O0O0O ):
+        return OOO0OO0OO000OO000 .__O000OO0O00OOOOOO0 ()
+    def __OOOO0O0O000OOO00O (O000OO000O0O00O00 ,O0OO00OO0OOOOO000 ,O0O000OOO000OO00O ,OOO0OO00OO00OOO00 ,O000O0OO000O0OOO0 ):
+        return O000OO000O0O00O00 .__O000OO0O00OOOOOO0 ()
+    def __O0O000O000OOOOO0O (OO0O0OOOO00O0OO00 ,O0O0O000OO0O0OO0O ,O00O0O0O0OO000O00 ,OO0OOOOOO0000OOO0 ):
+        return OO0O0OOOO00O0OO00 .__O000OO0O00OOOOOO0 ()
+    def __O0O000O0O000OO000 (OO00O0OO00O0OO00O ,O0OOOOO0OO00OO000 ,OO0O0O00O0OOOO0OO ,O00OOO000OO0OO0OO ,O0O0O0000O00OOOO0 ):
+        return OO00O0OO00O0OO00O .__OOOO0O0O000OOO00O ()
+class O0OOO00OOOO0OO0O0 :
+    def __init__ (O0000OO0O0OO00OOO ):
+        O0000OO0O0OO00OOO .__OOOOOOO00OO0OO0OO ()
+        O0000OO0O0OO00OOO .__O000O0O000O0OO00O ()
+        O0000OO0O0OO00OOO .__O00OO000O000O0000 ()
+        O0000OO0O0OO00OOO .__OO0OO00O00O00OO00 ()
+        O0000OO0O0OO00OOO .__OO00O0O00O0O00O00 ()
+        O0000OO0O0OO00OOO .__OO0OOOO000000OO00 ()
+    def __OOOOOOO00OO0OO0OO (OO000O0OO00OO0O0O ,OO0OO0OO0OO0O0O0O ,O000O000OOO000000 ):
+        return OO000O0OO00OO0O0O .__OO0OOOO000000OO00 ()
+    def __O000O0O000O0OO00O (OO0OO00O00OO0O00O ,O0OO00OOO0OO00OO0 ,O000O00000OOOOO00 ,O0000OOO0O0000O0O ,OO000O0O0000O0O00 ,O0OOO00OOO00OO0O0 ,O0OOO0O0O00OO000O ):
+        return OO0OO00O00OO0O00O .__O000O0O000O0OO00O ()
+    def __O00OO000O000O0000 (O00000OOO0O00OOO0 ,OOOO0O000000000O0 ):
+        return O00000OOO0O00OOO0 .__OO00O0O00O0O00O00 ()
+    def __OO0OO00O00O00OO00 (O0OO0OOOOOOOOO0O0 ,O000OO000OO00OO00 ,OO00000O000OO00O0 ,O000O0O000O00OO0O ):
+        return O0OO0OOOOOOOOO0O0 .__O000O0O000O0OO00O ()
+    def __OO00O0O00O0O00O00 (O00O0O0OO0O0000O0 ,OO0O00OO0O0OOOO0O ,O00O0OOOOOO000000 ,O00OOO0000OO0O000 ):
+        return O00O0O0OO0O0000O0 .__OO00O0O00O0O00O00 ()
+    def __OO0OOOO000000OO00 (OO0O0OO0OO0OO0OO0 ,OOOOOO00O0O00O00O ,O0OOOOO000OO0OOOO ,O000OO0OOOO0OOO0O ,OO0OOO000OOOOOOO0 ,O0OOO00O000000OO0 ,OO0OO0O0O0000O00O ):
+        return OO0O0OO0OO0OO0OO0 .__OO00O0O00O0O00O00 ()
+class O000O0OOOO0O00O00 :
+    def __init__ (O0O00000OO00OOOOO ):
+        O0O00000OO00OOOOO .__OO00000OOO0OOO00O ()
+        O0O00000OO00OOOOO .__O0000O000O0000000 ()
+        O0O00000OO00OOOOO .__OOO0OOO000O0OOOO0 ()
+        O0O00000OO00OOOOO .__O0O0O00O00O00OO0O ()
+        O0O00000OO00OOOOO .__OO000O0000O0O0OOO ()
+    def __OO00000OOO0OOO00O (OOOOOOOOOO0OO0O00 ,O00OOO00OO0OOOO0O ,OOO00O000O00OO0O0 ,OOOOO0O000OOO0O00 ,OO0O00O0O00OOO0OO ,O00O0O00OO0OOOOOO ,OOOOO000OOO0OO0O0 ):
+        return OOOOOOOOOO0OO0O00 .__OO000O0000O0O0OOO ()
+    def __O0000O000O0000000 (O000O0OOO0OOOOOO0 ,OO00O0OOOO00OO0OO ,OOOOO00000O00OOO0 ,OO0O00OO00O0000OO ,O000OOO000OO0000O ):
+        return O000O0OOO0OOOOOO0 .__OOO0OOO000O0OOOO0 ()
+    def __OOO0OOO000O0OOOO0 (O0OOOOO00000O0O0O ,O000000O00O00O0OO ,OO0O00O000OO0O00O ,OOO00O00000OOO0OO ,O00O00OOO00O0OO0O ,OOO00O0O00O00O00O ,O00OO0O0OO0O0O00O ):
+        return O0OOOOO00000O0O0O .__OO000O0000O0O0OOO ()
+    def __O0O0O00O00O00OO0O (O000O00O0O000OO0O ,O000000O000OO0O00 ,O00O0O0OOOO00000O ,OOO00OO000OO0O00O ):
+        return O000O00O0O000OO0O .__OOO0OOO000O0OOOO0 ()
+    def __OO000O0000O0O0OOO (O00O00OO00O00OO00 ,O00000000OO0OO0O0 ):
+        return O00O00OO00O00OO00 .__OOO0OOO000O0OOOO0 ()
+class O00OO0OO00O0000O0 :
+    def __init__ (OOOO00OO00O000O00 ):
+        OOOO00OO00O000O00 .__O0O000O00O000OOO0 ()
+        OOOO00OO00O000O00 .__OOO0OO0OO0OOOO0OO ()
+        OOOO00OO00O000O00 .__O00O0OO0O0O00O0OO ()
+        OOOO00OO00O000O00 .__OO0OO0OOO00000000 ()
+        OOOO00OO00O000O00 .__O000OOOO0OO0OO0OO ()
+        OOOO00OO00O000O00 .__O000OO000O00O0000 ()
+        OOOO00OO00O000O00 .__O00O00OO0000O000O ()
+        OOOO00OO00O000O00 .__OO0OOO0OOO0O0OO00 ()
+        OOOO00OO00O000O00 .__OO0O0O000OO0O0O00 ()
+        OOOO00OO00O000O00 .__O0O0000O0O0000OO0 ()
+    def __O0O000O00O000OOO0 (O000O0000O0O0O0OO ,O0OO0OOOOOO000OOO ,OO0O0OOO0OOOOO0OO ,OOO00OO0000O0OOOO ,O000OOOO0O0OOOOO0 ):
+        return O000O0000O0O0O0OO .__O00O0OO0O0O00O0OO ()
+    def __OOO0OO0OO0OOOO0OO (O00000OOO0O0000O0 ,O00OOO0000O0O0O0O ):
+        return O00000OOO0O0000O0 .__O000OOOO0OO0OO0OO ()
+    def __O00O0OO0O0O00O0OO (OO00OO0O000O0O00O ,O000O0O0OO00OOO00 ):
+        return OO00OO0O000O0O00O .__O00O0OO0O0O00O0OO ()
+    def __OO0OO0OOO00000000 (OO0O00O000O00OOO0 ,O0OO0OO0OOOO00000 ,OO00O00000O0O00O0 ,O0OOO000OO00OO000 ,OOOOOOOOOOOOOO0O0 ):
+        return OO0O00O000O00OOO0 .__O000OOOO0OO0OO0OO ()
+    def __O000OOOO0OO0OO0OO (OO0O0000O00OOO0OO ,O0OO00000000OO00O ,O0O00OOO0OOOO0OO0 ):
+        return OO0O0000O00OOO0OO .__O00O0OO0O0O00O0OO ()
+    def __O000OO000O00O0000 (OOO00OOOOO0000OO0 ,O0OO00O0O0OO0O0O0 ):
+        return OOO00OOOOO0000OO0 .__O00O00OO0000O000O ()
+    def __O00O00OO0000O000O (O00OO0OO0O000OO0O ,OO00OO00OOO00OO0O ,O000O000OO00000OO ,O0OOO00O00OO00O0O ,OOO000OOO0O0O0OOO ):
+        return O00OO0OO0O000OO0O .__O000OO000O00O0000 ()
+    def __OO0OOO0OOO0O0OO00 (OOO0O0OOO000OO000 ,O0000OOOOO0OO0O0O ,OO0O0OO0OO0OO0O0O ,OOO0OOO0O00O0OOO0 ,OOOO000000O00OOO0 ):
+        return OOO0O0OOO000OO000 .__OO0OO0OOO00000000 ()
+    def __OO0O0O000OO0O0O00 (OOO000O0OO00O0OO0 ,O00OOOO0O0O00O00O ,O00OO0O0OO0O00O0O ,O000OOO000OOO000O ,O0OO000OOO0000000 ,OOO000O0OO00O000O ,O0OO00000OOOO0000 ,O000OOOOO00OOO00O ):
+        return OOO000O0OO00O0OO0 .__O000OOOO0OO0OO0OO ()
+    def __O0O0000O0O0000OO0 (O0O0O00O0O0OOO0O0 ,OOO0OO0000OOOO000 ,O000OOOO000OO00O0 ):
+        return O0O0O00O0O0OOO0O0 .__O000OO000O00O0000 ()
+class OOOO0O00OOO0O0000 :
+    def __init__ (OOOO0O00O00O0O0O0 ):
+        OOOO0O00O00O0O0O0 .__OO00OOO0O00OOOOO0 ()
+        OOOO0O00O00O0O0O0 .__O0O0O0000OOOO0000 ()
+        OOOO0O00O00O0O0O0 .__O0O0OO00OO0O0OO00 ()
+        OOOO0O00O00O0O0O0 .__OO00O0O0O00000OOO ()
+        OOOO0O00O00O0O0O0 .__O0O00OOOO0OOO00O0 ()
+        OOOO0O00O00O0O0O0 .__O0OOOOOOO0O00O0O0 ()
+        OOOO0O00O00O0O0O0 .__OOO000OO00OOO00OO ()
+        OOOO0O00O00O0O0O0 .__OO0OOO00OO0OO0000 ()
+        OOOO0O00O00O0O0O0 .__O000O0000O0OO0O00 ()
+        OOOO0O00O00O0O0O0 .__O0OOO0O00O0O0O00O ()
+        OOOO0O00O00O0O0O0 .__OO0OO0O00OOO0OO0O ()
+        OOOO0O00O00O0O0O0 .__OOOOO0OO0OO0O0O0O ()
+        OOOO0O00O00O0O0O0 .__O0O0OO00OO0OOO00O ()
+    def __OO00OOO0O00OOOOO0 (O0OOOOO0OOOO0O000 ,OOOOOO0O0O0000O00 ,OO0O0000O00000OOO ,OOO000OO0O0O0O0OO ,OO00OO0O0OO0O000O ,O0OOOOOO0O0OOO00O ):
+        return O0OOOOO0OOOO0O000 .__OO00OOO0O00OOOOO0 ()
+    def __O0O0O0000OOOO0000 (OO0O00OO0O00OO0OO ,O0OO0000O00OO0O0O ,O0OOOO0O0O0OO00OO ,O0OO00O0OOO000000 ,O0OO00OOO00OO0OO0 ):
+        return OO0O00OO0O00OO0OO .__OOOOO0OO0OO0O0O0O ()
+    def __O0O0OO00OO0O0OO00 (OOO00OOO00O0OOO0O ,O0OO0OO0OO0O000O0 ):
+        return OOO00OOO00O0OOO0O .__OO0OOO00OO0OO0000 ()
+    def __OO00O0O0O00000OOO (OOOOOO00OOO0OO00O ,OO0O00O000000O0OO ,O0OOO000OOO0O0O0O ,O00OO00OO0O00O00O ,OOOOOOO00OOOOOOO0 ):
+        return OOOOOO00OOO0OO00O .__O0O0OO00OO0OOO00O ()
+    def __O0O00OOOO0OOO00O0 (OO000OO0OOOO0O0OO ,OO0O000O0O0OO0O0O ,O0OOOO0OOOO000O00 ):
+        return OO000OO0OOOO0O0OO .__O0O00OOOO0OOO00O0 ()
+    def __O0OOOOOOO0O00O0O0 (O0OOO00OOOO0OOOOO ,O0OO0OOO0O0OOOO00 ,OO0O0O0O00O0OO00O ,O00O0O00O0O00000O ,O0O00O0O00OO0000O ,OO0OO000O0O0OO00O ,OO0000O0O0OOO0O0O ):
+        return O0OOO00OOOO0OOOOO .__O0OOOOOOO0O00O0O0 ()
+    def __OOO000OO00OOO00OO (O00OOOOOOO0O000OO ,O0O00O00OOOOOOOOO ,O00OOO0OO00OOOOO0 ,OOO00OOO000O0O0O0 ,O0OOOO00OOOOO0O0O ,O00OO0OOO0O00OO00 ):
+        return O00OOOOOOO0O000OO .__O000O0000O0OO0O00 ()
+    def __OO0OOO00OO0OO0000 (OOOOOOO00O0O000OO ,O0O00OOO00O0O0OO0 ,OOOOOOO0OO00O0OOO ,OO0O0000OOOOOO0O0 ,O00OOO0O0OOO00OO0 ,OOOO0O0OO00O00000 ):
+        return OOOOOOO00O0O000OO .__O0O0O0000OOOO0000 ()
+    def __O000O0000O0OO0O00 (OOOO0O0OO00OOO00O ,O00000OO0O00OOOO0 ,O0OOOOOOOO00O0000 ):
+        return OOOO0O0OO00OOO00O .__OO0OO0O00OOO0OO0O ()
+    def __O0OOO0O00O0O0O00O (O0OOOOO0O0O0000OO ,O0O000O0OO0OO0OOO ,OO0OO0O0O000O0OOO ,OO0OO00O00OOOO0OO ,OO00OO0O00O00000O ,O0O000OO0OO0O0O00 ):
+        return O0OOOOO0O0O0000OO .__O000O0000O0OO0O00 ()
+    def __OO0OO0O00OOO0OO0O (OOO0O00OO0OO0O0OO ,O0O0OO0OO00OO0OOO ,O000OOOO0000O0O0O ,O000000O0OO0OO00O ):
+        return OOO0O00OO0OO0O0OO .__O0O0OO00OO0OOO00O ()
+    def __OOOOO0OO0OO0O0O0O (OOOOO0000OO00O00O ,OOO00000OOOOOOO00 ,O0O000OOO000OO0OO ,O00OOOOO0OO0000O0 ,OOOOO0O0OOOO0OO0O ,O0O0O00OO00O00OOO ,O000OOOO0O0OOO000 ):
+        return OOOOO0000OO00O00O .__O0OOO0O00O0O0O00O ()
+    def __O0O0OO00OO0OOO00O (O00O000OO0O00O00O ,OOOOOOO0OO00O0000 ):
+        return O00O000OO0O00O00O .__OO0OOO00OO0OO0000 ()
+class OOOO0O00000O0000O :
+    def __init__ (OOOOO0OO0O0OO0O0O ):
+        OOOOO0OO0O0OO0O0O .__O00OO00O0O0O000OO ()
+        OOOOO0OO0O0OO0O0O .__O00000O0OO0O0OO0O ()
+        OOOOO0OO0O0OO0O0O .__OO0OO00O00000000O ()
+        OOOOO0OO0O0OO0O0O .__O0O0OO0O0O00O0OOO ()
+        OOOOO0OO0O0OO0O0O .__O0OO00O00O0O0OOOO ()
+        OOOOO0OO0O0OO0O0O .__OOO0OOO00O0OOOOOO ()
+        OOOOO0OO0O0OO0O0O .__OO0O000OOOOOO0OOO ()
+        OOOOO0OO0O0OO0O0O .__OOO0OOOOOOOOO0OO0 ()
+        OOOOO0OO0O0OO0O0O .__OOOO0000000OOOOOO ()
+        OOOOO0OO0O0OO0O0O .__O00OO00O0O0OO00O0 ()
+        OOOOO0OO0O0OO0O0O .__OO0O00OOOOOO0O000 ()
+        OOOOO0OO0O0OO0O0O .__OO0OOOO0OOOO0OOO0 ()
+        OOOOO0OO0O0OO0O0O .__OO0OOOO0O0O0OOOOO ()
+        OOOOO0OO0O0OO0O0O .__O0O0O00OO00OOO0O0 ()
+    def __O00OO00O0O0O000OO (O0OOO0OOOO0O00OOO ,O000OOOOO0O000OO0 ,O000OOOOO00OO00O0 ,O0000OOOOO00OO0O0 ,O00OOOO0OO0000OO0 ):
+        return O0OOO0OOOO0O00OOO .__OO0OOOO0OOOO0OOO0 ()
+    def __O00000O0OO0O0OO0O (O0000OOOOO00O00OO ,OO00O0OO000O0O000 ,O0OO0000O000OOOO0 ,OOOOO0OO00O0O0OO0 ,O0OO0O000OO00O0OO ,OO0O0000O0000O00O ):
+        return O0000OOOOO00O00OO .__O00OO00O0O0OO00O0 ()
+    def __OO0OO00O00000000O (OOO0O00OO00OO0O0O ,OOOOO00O0O0000O00 ):
+        return OOO0O00OO00OO0O0O .__O0O0O00OO00OOO0O0 ()
+    def __O0O0OO0O0O00O0OOO (O0O0O0OO0O00OO0OO ,O0O00OOOO0000OOOO ,O0OO0OOO00O0O0OOO ,O0O000OO0O00000O0 ,OOOO0OO0OO0O00O00 ,OOO0O0OOO0O00000O ,O00O0OOO00OO0OOOO ):
+        return O0O0O0OO0O00OO0OO .__OOO0OOO00O0OOOOOO ()
+    def __O0OO00O00O0O0OOOO (OO00OO000O0O00000 ,O0OOOOO00OO00O0O0 ,OO0O0O000OO000O00 ,OO0O000000O0000O0 ,OOOO00OOO0OO0OOOO ,O0000OO00O00O0OO0 ,O0OOOO00OOO0O0000 ):
+        return OO00OO000O0O00000 .__OO0OO00O00000000O ()
+    def __OOO0OOO00O0OOOOOO (OO00O0O0O00OOO0O0 ,O0OO0000OOO0O0O00 ,OOO0OOOO00O0000OO ,OOOO00O0O0000O00O ,O0O0OO0OO0O00000O ,O00O0OOO0OO0O0O00 ,OO00OOOOO0000OOO0 ):
+        return OO00O0O0O00OOO0O0 .__OO0OOOO0O0O0OOOOO ()
+    def __OO0O000OOOOOO0OOO (OO00O00O00O00OOOO ,O00OOO0OO00OO0000 ,O00O0OOOOOOOOOO00 ,O00OOOO00OOOOOO00 ,OO00OOOO0OO00O00O ,OOO0OO0000O0O00O0 ):
+        return OO00O00O00O00OOOO .__OOOO0000000OOOOOO ()
+    def __OOO0OOOOOOOOO0OO0 (O0O00O00O00OOO0OO ,OOOOOOOOO000OO0OO ):
+        return O0O00O00O00OOO0OO .__O00OO00O0O0O000OO ()
+    def __OOOO0000000OOOOOO (O00O0OOOO00000O0O ,OO0O0O0O0O000000O ,OOO0OOOO00OO0000O ,OOOO0OO0OOO00OO00 ):
+        return O00O0OOOO00000O0O .__OO0OOOO0O0O0OOOOO ()
+    def __O00OO00O0O0OO00O0 (OO00OOO0O00O0O000 ,O00O000OOOO0O0OOO ,OOOOOOOO0O0O0O0OO ,OO0O00OOOOOO0OOOO ,OOOO0O00OOOOOO000 ,OOOOOOO0OOOOOO0O0 ):
+        return OO00OOO0O00O0O000 .__O0OO00O00O0O0OOOO ()
+    def __OO0O00OOOOOO0O000 (O00O0O0OOO0O00000 ,OOOOOO0000O0O0000 ,O000O0O0OO00OO0O0 ,OO00O0O000O00O000 ,O0000000OOO0OOO00 ,O00000O00OOO00OOO ):
+        return O00O0O0OOO0O00000 .__OO0OOOO0OOOO0OOO0 ()
+    def __OO0OOOO0OOOO0OOO0 (OO00000OO0O00O0O0 ,O0OOOO0OO00O0OOOO ,O00OOOO00OOOOO00O ,OO000OO00O0OO0OO0 ):
+        return OO00000OO0O00O0O0 .__OO0OOOO0OOOO0OOO0 ()
+    def __OO0OOOO0O0O0OOOOO (O000O0O0OO0O0OOOO ,O00O0O0OOOOO00OO0 ):
+        return O000O0O0OO0O0OOOO .__OOOO0000000OOOOOO ()
+    def __O0O0O00OO00OOO0O0 (OO000OO0OOO0O000O ,OOOO00O0OOO0000OO ,OOOO0OOOO0OOO000O ,OOO0OO0O0000O00O0 ,O0O00OO0O0OO0OO0O ,OOO0OO00O00OO0OOO ,OO00OOO000OOOOOOO ,OO000OOO00OO00OO0 ):
+        return OO000OO0OOO0O000O .__OO0O00OOOOOO0O000 ()
+class OOOO0O00O00O00000 :
+    def __init__ (O0O0OO0O000OO0000 ):
+        O0O0OO0O000OO0000 .__O0OOO0O0000000000 ()
+        O0O0OO0O000OO0000 .__OOO0OO0000O0OOOOO ()
+        O0O0OO0O000OO0000 .__OOOOOOO0OOO0OOO00 ()
+        O0O0OO0O000OO0000 .__O0O0OO0O0O000000O ()
+        O0O0OO0O000OO0000 .__OOO0OOOOO0O0OO000 ()
+        O0O0OO0O000OO0000 .__O0OOOO0000O00O0O0 ()
+        O0O0OO0O000OO0000 .__O0000000O00OOOOOO ()
+        O0O0OO0O000OO0000 .__O00OOOOO0O00OOOOO ()
+        O0O0OO0O000OO0000 .__O0O0O00O0OO00OO0O ()
+        O0O0OO0O000OO0000 .__OO00000O0O0000O00 ()
+        O0O0OO0O000OO0000 .__O0OOOOOO00OOO0O00 ()
+        O0O0OO0O000OO0000 .__O0000OOOO0OO00OO0 ()
+        O0O0OO0O000OO0000 .__OOO0O000O0O0O00O0 ()
+        O0O0OO0O000OO0000 .__OOO00OO0O00OO00O0 ()
+        O0O0OO0O000OO0000 .__OOOO0O00O0OO00OO0 ()
+    def __O0OOO0O0000000000 (O0O0O00O0OO0O00OO ,OO0O00OOO0OOOO0OO ,OOOO00OOO0000O0O0 ,OOO0O00OO000OO000 ):
+        return O0O0O00O0OO0O00OO .__O0O0OO0O0O000000O ()
+    def __OOO0OO0000O0OOOOO (OO00OO0O00O00O000 ,OOOO000O00OO00O0O ,O000OOOO000O00OO0 ,O00O0O0OO00OO00O0 ,O00OOOOOOO0OO000O ):
+        return OO00OO0O00O00O000 .__O0O0O00O0OO00OO0O ()
+    def __OOOOOOO0OOO0OOO00 (OOOOO00OOOOO0OO0O ,OO0O0000O0O000O0O ,OOO0O000O0O0O0O00 ,O00O0OOO0O0O000OO ,O0O0O00OOO0O00O0O ,O000OO000OOO0O00O ,OO0O0OO0OO00000OO ,OOOOOOOOOO00OO00O ):
+        return OOOOO00OOOOO0OO0O .__O00OOOOO0O00OOOOO ()
+    def __O0O0OO0O0O000000O (O00O000O0000O0000 ,O0OO0O00OOO0OOOOO ,O0OOOO00O000O0000 ,O0O00O000OOO00OO0 ,O00O000OO0OOOOOO0 ):
+        return O00O000O0000O0000 .__O00OOOOO0O00OOOOO ()
+    def __OOO0OOOOO0O0OO000 (OOOOO00OO0000OO0O ,O000OO0O0OO0OOO0O ,O0OO000O0000OO00O ,OO000O0000O00OO0O ):
+        return OOOOO00OO0000OO0O .__O0O0OO0O0O000000O ()
+    def __O0OOOO0000O00O0O0 (OOOO0O0000O0O0OO0 ,OOO0OOO0OOOO000OO ,OOO00O0O0OOO00000 ,OO0OO00OOOO0O0OO0 ):
+        return OOOO0O0000O0O0OO0 .__O0OOO0O0000000000 ()
+    def __O0000000O00OOOOOO (OOOOO00O00000O00O ,O00O0O00OO000O0OO ,OO00OO0OOO0O0O0O0 ,O00OO0OO000000O0O ,OOO000000O00OOOOO ,O0OO00O0O00OO0O0O ,O0O0O0000000OO0OO ,O0OO0000O00OO000O ):
+        return OOOOO00O00000O00O .__OOO0OOOOO0O0OO000 ()
+    def __O00OOOOO0O00OOOOO (O00O00O000OOOO000 ,OO00OOO0OO0O0O00O ,O0000000O000O00O0 ,O00OOOOOOOOOOO000 ,O0O0O0O0O00000OO0 ,OO0O0O0OO0O0OOO00 ,OO00OO000OOOO0OOO ,O0O00O0OO0OOOO00O ):
+        return O00O00O000OOOO000 .__OOO0O000O0O0O00O0 ()
+    def __O0O0O00O0OO00OO0O (OOO00O000O0O0OOOO ,O000OO0000OOO0O0O ,O0O0OOO0000OOOO00 ,OOOO0OOOOOOO0O00O ):
+        return OOO00O000O0O0OOOO .__O0O0O00O0OO00OO0O ()
+    def __OO00000O0O0000O00 (OO00O0O0OO0OOOO0O ,OO00OOO0O0O00O000 ,OO0000OOOOO0OO000 ):
+        return OO00O0O0OO0OOOO0O .__OOOO0O00O0OO00OO0 ()
+    def __O0OOOOOO00OOO0O00 (OO0OO000OO0O0OO00 ,O0OOO00O0O0O0OOOO ,O0O0000OOO0OO0O0O ,O0O0OOO0OOOOOOO0O ,OOOO00OO0O00O0O0O ,O0O0O00O000O0OOOO ,O0OO0OO0O00O0OOO0 ):
+        return OO0OO000OO0O0OO00 .__OOO0OO0000O0OOOOO ()
+    def __O0000OOOO0OO00OO0 (O0O0O00O0O00O0OOO ,O0OOOO0OOOO00O000 ,O00OO00OO000000OO ,OOOO0O000000O00O0 ,O00O0OO0O00O00O0O ):
+        return O0O0O00O0O00O0OOO .__O0O0OO0O0O000000O ()
+    def __OOO0O000O0O0O00O0 (O000O0OOO00OOO00O ,O00OO0O0O0000O00O ,OO0O00O00O00000OO ,O00O00OO0OOO0OOO0 ,O0000O0O0O000O0O0 ,OO0OO00OOOO00OO00 ,O0O0OOOO0O0O0OO00 ,OOOOOO0OO00OO0O0O ):
+        return O000O0OOO00OOO00O .__OOOOOOO0OOO0OOO00 ()
+    def __OOO00OO0O00OO00O0 (O0O00OO000O0O0O00 ,OOO0OO0OOOO0OO00O ):
+        return O0O00OO000O0O0O00 .__OOOO0O00O0OO00OO0 ()
+    def __OOOO0O00O0OO00OO0 (O00O000000OOO0O00 ,O000O00O0O00OOO0O ,OOO000O000O00OOO0 ):
+        return O00O000000OOO0O00 .__O0000000O00OOOOOO ()
+import os ,json ,sys ,requests 
+from sys import platform 
+from time import sleep 
+from datetime import datetime 
+from random import randint 
+OOO0O0O00O000O00O ="\033[1;90m"
+O0OOO000OOOOO0000 ="\033[1;32m"
+O0O0OOO0O00OOOO00 ="\033[1;37m"
+OOO00000O0O0O0000 ="\033[1;31m"
+O00OOOO0OOO00OO0O ="\033[1;33m"
+OOO00OOOO0OOO00O0 ="\033[1;35m"
+O0O0O00O0OOOO000O ="\033[1;34m"
+OO0O0000OOO00O0OO ="\033[1;36m"
+OOO0OO0O00O000O0O ="\e[35m"
+OOOO000O00OOOO00O ="\033[1;95m"
+#O0O0OOO0O00OOOO00b
+O000OO0OO0OOOOO0O =O0O0OOO0O00OOOO00 +"~"+OOO00000O0O0O0000 +"["+O00OOOO0OOO00OO0O +"⟨⟩"+OOO00000O0O0O0000 +"] "+O0O0OOO0O00OOOO00 +"➩ "+O0OOO000OOOOO0000 
+OOO00O000O000OO0O =O0O0OOO0O00OOOO00 +"~"+OOO00000O0O0O0000 +"["+O0OOO000OOOOO0000 +"✓"+OOO00000O0O0O0000 +"] "+O0O0OOO0O00OOOO00 +"➩ "+O0OOO000OOOOO0000 
+#exec (requests .get ('https://run.mocky.io/v3/e9ffdb69-5690-4980-b233-5194d804448d').text )
+def O0OOOOOO0000O00O0 (OO0OO00OO0OOOOO0O ):
+	O00000OO0OO0OO00O ="────"*OO0OO00OO0OOOOO0O 
+	print (OOO00000O0O0O0000 +O00000OO0OO0OO00O )
+def OO0O00OOOO0OOO0OO (OOO00OOOO0OOOO000 ,OOOO0O00O0O0OOOO0 ,OO0OOO0OO0OO000O0 ,OO0O00OOO0O0OOOOO ,OO000OOO0OOO00O00 ):
+	O0O0OO0OOO0OO000O =OOOO0O00O0O0OOOO0 .split ('_')[1 ]if '_'in OOOO0O00O0O0OOOO0 else OOOO0O00O0O0OOOO0 
+	OO00O00000O00O00O =datetime .now ().strftime ("%H:%M:%S")
+	print (f'{O00OOOO0OOO00OO0O}[{O0O0OOO0O00OOOO00}{OOO00OOOO0OOOO000}{vang}] {OOO00000O0O0O0000}| {OO0O0000OOO00O0OO}{OO00O00000O00O00O} {red}| {vang}{OO0OOO0OO0OO000O0} {red}| {trang}{O0O0OO0OOO0OO000O} {red}| {O0OOO000OOOOO0000}{OO0O00OOO0O0OOOOO} {red}| {vang}{OO000OOO0OOO00O00} {red}|')
+def OO0O00OOOOO0OOO0O (O0OOOOO00000000OO ,O00OO0OOO00OO0O00 ):
+	OO0OOO000O0OO00O0 =datetime .now ().strftime ("%H:%M:%S")
+	O0OOOOO000OO0O0O0 =O0OOOOO00000000OO .split ('_')[1 ]if '_'in O0OOOOO00000000OO else O0OOOOO00000000OO 
+	print (f'{O00OOOO0OOO00OO0O}[{OOO00000O0O0O0000}X{vang}] {red}| {OO0O0000OOO00O0OO}{OO0OOO000O0OO00O0} {red}| {vang}{O00OO0OOO00OO0O00} {red}| {O0O0OOO0O00OOOO00}{O0OOOOO000OO0O0O0} {red}| ',end ='\r');sleep (2 );print ('                                                   ',end ='\r')
+def OO0O00O0OO0OOOOO0 ():
+	OOO0OOO0O00O000O0 =[]
+	O0OO000000O000OOO =0 
+	while True :
+		O0OO000000O000OOO +=1 
+		OO000OOO0O00OO000 =input (O000OO0OO0OOOOO0O +f'Nhập Cookie Facebook Thứ {O0OO000000O000OOO}: '+O00OOOO0OOO00OO0O )
+		if OO000OOO0O00OO000 ==''and O0OO000000O000OOO >1 :
+			break 
+		OO0OO0OOOO000O0OO =Facebook_Api (OO000OOO0O00OO000 )
+		O0O0OOO00O000O00O =OO0OO0OOOO000O0OO .get_thongtin ()
+		if O0O0OOO00O000O00O !=0 :
+			OOOO0O0OO000OO0O0 =O0O0OOO00O000O00O [0 ]
+			print (f'{OO0O0000OOO00O0OO}Tên Facebook: {OOO00OOOO0OOO00O0}{OOOO0O0OO000OO0O0}')
+			OOO0OOO0O00O000O0 .append (OO000OOO0O00OO000 )
+			O0OOOOOO0000O00O0 (14 )
+		else :
+			print (f'{OOO00000O0O0O0000}Cookie Facebook Die ! Vui Lòng Nhập Lại !!!')
+			O0OOOOOO0000O00O0 (14 )
+			O0OO000000O000OOO -=1 
+	return OOO0OOO0O00O000O0 
+def OOOO0O00OOOO0O0O0 (O0OO0O0OO00OO000O ):
+	for OO000000O0OO0O00O in range (O0OO0O0OO00OO000O ,-1 ,-1 ):
+		print (f' {O0O0OOO0O00OOOO00}Đang hoạt động chống block sẽ chạy lại sau {OO000000O0OO0O00O} giây  ',end ='\r');sleep (1 );print ('                                                        ',end ='\r')
+def OOOO0OO0000000O00 (OOO0O0OO0O0OOOOO0 ,O00OOOOO000OOOOOO ):
+	O00OO0000OO0O00OO =randint (OOO0O0OO0O0OOOOO0 ,O00OOOOO000OOOOOO )
+	for O0O0O0O0O00O00000 in range (O00OO0000OO0O00OO ,-1 ,-1 ):
+		print (f'{hong}Delay >>> [{trang}'+str (O0O0O0O0O00O00000 )+O00OOOO0OOO00OO0O +']',end ='\r')
+		sleep (1 )
+def OOO00OOO0OO0OO00O ():
+	O0000O00O0O00O000 =0 
+	O0O00O0OO0O0OOOO0 =0 
+	banner ()
+	while True :
+		if os .path .exists ('configtds.txt'):
+			with open ('configtds.txt','r')as O0OOOO0O0000OO00O :
+				O000O0O00000OO0OO =O0OOOO0O0000OO00O .read ()
+			O0O00O0O0O0OO00OO =TraoDoiSub_Api (O000O0O00000OO0OO )
+			OOO00OOOOO000OO0O =O0O00O0O0O0OO00OO .main ()
+			try :
+				print (O000OO0OO0OOOOO0O +f'Nhập {O00OOOO0OOO00OO0O}[{O0O0OOO0O00OOOO00}1{vang}] {O0OOO000OOOOO0000}Giữ Lại Tài Khoản {vang}'+OOO00OOOOO000OO0O ['user'])
+				print (O000OO0OO0OOOOO0O +f'Nhập {O00OOOO0OOO00OO0O}[{O0O0OOO0O00OOOO00}2{vang}] {O0OOO000OOOOO0000}Nhập Access_Token TDS Mới')
+				O0000000OOOO0O0O0 =input (O000OO0OO0OOOOO0O +f'{O0OOO000OOOOO0000}Nhập {O0O0OOO0O00OOOO00}===>: {O00OOOO0OOO00OO0O}')
+				if O0000000OOOO0O0O0 =='2':
+					os .remove ('configtds.txt')
+				elif O0000000OOOO0O0O0 =='1':
+					pass 
+				else :
+					print (f'{OOO00000O0O0O0000}Lựa chọn không xác định !!!');O0OOOOOO0000O00O0 (14 )
+					continue 
+			except :
+				os .remove ('configtds.txt')
+		if not os .path .exists ('configtds.txt'):
+			O000O0O00000OO0OO =input (O000OO0OO0OOOOO0O +f'Nhập Access_Token TDS: ')
+			with open ('configtds.txt','w')as O0OOOO0O0000OO00O :
+				O0OOOO0O0000OO00O .write (O000O0O00000OO0OO )
+		with open ('configtds.txt','r')as O0OOOO0O0000OO00O :
+			O000O0O00000OO0OO =O0OOOO0O0000OO00O .read ()
+		O0O00O0O0O0OO00OO =TraoDoiSub_Api (O000O0O00000OO0OO )
+		OOO00OOOOO000OO0O =O0O00O0O0O0OO00OO .main ()
+		try :
+			OO00OOOO0O00O0O0O =OOO00OOOOO000OO0O ['xu']
+			O00O0OOOOOO0OO0O0 =OOO00OOOOO000OO0O ['xudie']
+			O0000OO000OOOO00O =OOO00OOOOO000OO0O ['user']
+			print (OO0O0000OOO00O0OO +' Đăng Nhập Thành Công ')
+			break 
+		except :
+			print (OOO00000O0O0O0000 +'Access Token Không Hợp Lệ! Xin Thử Lại ')
+			os .remove ('configtds.txt')
+			continue 
+	O0OOOOOO0000O00O0 (14 )
+	while True :
+		if os .path .exists ('Cookie_FB.txt'):
+			print (O000OO0OO0OOOOO0O +f'Nhập {OOO00000O0O0O0000}[{O00OOOO0OOO00OO0O}1{red}]{O0OOO000OOOOO0000} Sử Dụng Cookie Facebook Đã Lưu ')
+			print (O000OO0OO0OOOOO0O +f'Nhập {OOO00000O0O0O0000}[{O00OOOO0OOO00OO0O}2{red}]{O0OOO000OOOOO0000} Nhập Cookie Facebook Mới')
+			O0000000OOOO0O0O0 =input (O000OO0OO0OOOOO0O +f'{O0OOO000OOOOO0000}Vui Lòng Nhập: {O00OOOO0OOO00OO0O}')
+			if O0000000OOOO0O0O0 =='1':
+				print (OO0O0000OOO00O0OO +' Đang Lấy Dữ Liệu Đã Lưu');sleep (1 )
+				with open ('Cookie_FB.txt','r')as O0OOOO0O0000OO00O :
+					O0O0O000O000OO000 =json .loads (O0OOOO0O0000OO00O .read ())
+					break 
+			elif O0000000OOOO0O0O0 =='2':
+				os .remove ('Cookie_FB.txt');O0OOOOOO0000O00O0 (14 )
+			else :
+				print (OOO00000O0O0O0000 +'Lựa Chọn Không Xác Định.');O0OOOOOO0000O00O0 (14 );continue 
+		if not os .path .exists ('Cookie_FB.txt'):
+			O0O0O000O000OO000 =OO0O00O0OO0OOOOO0 ()
+			with open ('Cookie_FB.txt','w')as O0OOOO0O0000OO00O :
+				json .dump (O0O0O000O000OO000 ,O0OOOO0O0000OO00O )
+			break 
+	banner ()
+	print (O000OO0OO0OOOOO0O +f'Tên Tài Khoản: {O00OOOO0OOO00OO0O}{O0000OO000OOOO00O} ')
+	print (O000OO0OO0OOOOO0O +f'Xu Hiện Tại: {O00OOOO0OOO00OO0O}{OO00OOOO0O00O0O0O}')
+	print (O000OO0OO0OOOOO0O +f'Xu Bị Phạt: {O00OOOO0OOO00OO0O}{O00O0OOOOOO0OO0O0} ')
+	print (O000OO0OO0OOOOO0O +f'Số Cookie: {O00OOOO0OOO00OO0O}{len(O0O0O000O000OO000)} ')
+	O0OOOOOO0000O00O0 (14 )
+	print (O000OO0OO0OOOOO0O +f' Nhập {O00OOOO0OOO00OO0O}[{O0O0OOO0O00OOOO00}1{vang}] {O0OOO000OOOOO0000}Để Chạy Nhiệm Vụ Like')
+	print (O000OO0OO0OOOOO0O +f' Nhập {O00OOOO0OOO00OO0O}[{O0O0OOO0O00OOOO00}2{vang}] {O0OOO000OOOOO0000}Để Chạy Nhiệm Vụ Like 2')
+	print (O000OO0OO0OOOOO0O +f' Nhập {O00OOOO0OOO00OO0O}[{O0O0OOO0O00OOOO00}3{vang}] {O0OOO000OOOOO0000}Để Chạy Nhiệm Vụ Comment')
+	print (O000OO0OO0OOOOO0O +f' Nhập {O00OOOO0OOO00OO0O}[{O0O0OOO0O00OOOO00}4{vang}] {O0OOO000OOOOO0000}Để Chạy Nhiệm Vụ Share')
+	print (O000OO0OO0OOOOO0O +f' Nhập {O00OOOO0OOO00OO0O}[{O0O0OOO0O00OOOO00}5{vang}] {O0OOO000OOOOO0000}Để Chạy Nhiệm Vụ Cảm Xúc')
+	print (O000OO0OO0OOOOO0O +f' Nhập {O00OOOO0OOO00OO0O}[{O0O0OOO0O00OOOO00}6{vang}] {O0OOO000OOOOO0000}Để Chạy Nhiệm Vụ Follow')
+	print (O000OO0OO0OOOOO0O +f' Nhập {O00OOOO0OOO00OO0O}[{O0O0OOO0O00OOOO00}7{vang}] {O0OOO000OOOOO0000}Để Chạy Nhiệm Vụ Like Page')
+	print (O000OO0OO0OOOOO0O +f' Nhập {O00OOOO0OOO00OO0O}[{O0O0OOO0O00OOOO00}8{vang}] {O0OOO000OOOOO0000}Để Chạy Nhiệm Vụ Cảm Xúc CMT')
+	print (O000OO0OO0OOOOO0O +f' Nhập {O00OOOO0OOO00OO0O}[{O0O0OOO0O00OOOO00}9{vang}] {O0OOO000OOOOO0000}Để Chạy Nhiệm Vụ Group')
+	print (O000OO0OO0OOOOO0O +f'{OO0O0000OOO00O0OO}Có Thể Chọn Nhiều Nhiệm Vụ (Ví Dụ 123...)')
+	O0OOOOOO0000O00O0 (14 )
+	OOO0O00000O0OOOO0 =input (O000OO0OO0OOOOO0O +f'Nhập Số Để Chạy Nhiệm Vụ:{O00OOOO0OOO00OO0O} ')
+	OOOO00OOO0O00O000 =int (input (O000OO0OO0OOOOO0O +f'Nhập Delay Min: {O00OOOO0OOO00OO0O}'))
+	OO0O00O0O0000O0OO =int (input (O000OO0OO0OOOOO0O +f'Nhập Delay Max:{O00OOOO0OOO00OO0O} '))
+	print (O000OO0OO0OOOOO0O +f'Sau ____ Nhiệm Vụ Thì Kích Hoạt Chống Block.',end ='\r')
+	OO00OO0OO0OO0O0OO =int (input (O000OO0OO0OOOOO0O +f'Sau{O00OOOO0OOO00OO0O} '))
+	print (O000OO0OO0OOOOO0O +f'Sau {O00OOOO0OOO00OO0O}{OO00OO0OO0OO0O0OO} {O0OOO000OOOOO0000}Nhiệm Vụ Nghỉ Ngơi ____ Giây       ',end ='\r')
+	O0O0O0OO000000000 =int (input (O000OO0OO0OOOOO0O +f'Sau {O00OOOO0OOO00OO0O}{OO00OO0OO0OO0O0OO} {O0OOO000OOOOO0000}Nhiệm Vụ Nghỉ Ngơi {vang}'))
+	O0OOO0OO0O0O0000O =int (input (O000OO0OO0OOOOO0O +f'Sau Bao Nhiêu Nhiệm Vụ Thì Đổi Nick:{O00OOOO0OOO00OO0O} '))
+	O0OOOOOO0000O00O0 (14 )
+	while True :
+		if len (O0O0O000O000OO000 )==0 :
+			print (OOO00000O0O0O0000 +'Đã Xoá Tất Cả Cookie, Vui Lòng Nhập Lại  ')
+			O0O0O000O000OO000 =OO0O00O0OO0OOOOO0 ()
+			with open ('Cookie_FB.txt','w')as O0OOOO0O0000OO00O :
+				json .dump (O0O0O000O000OO000 ,O0OOOO0O0000OO00O )
+		for O0OO0000OOO0OO0O0 in O0O0O000O000OO000 :
+			O0O0O00OOO0O0O0O0 ,OO0O0O00OOOOO00OO ,O00OOOO0OO0OO0000 ,OOO00O0000O0O000O ,O0O000O000000OO00 ,OO0OOO0000OO0O0OO ,O00OO0OOO0O000O00 ,OOO0000O00OOOO000 =0 ,0 ,0 ,0 ,0 ,0 ,0 ,0 
+			O0O00000O0OO00000 =Facebook_Api (O0OO0000OOO0OO0O0 )
+			OOOO000OO0O0000O0 =O0O00000O0OO00000 .get_thongtin ()
+			if OOOO000OO0O0000O0 !=0 :
+				OOOO0OOOOO00OOOOO =OOOO000OO0O0000O0 [0 ]
+				OOOOO0O0O00OOO0OO =OOOO000OO0O0000O0 [1 ]
+			else :
+				OOOOO0O0O00OOO0OO =O0OO0000OOO0OO0O0 .split ('c_user=')[1 ].split (';')[0 ]
+				print (f'{OOO00000O0O0O0000}Cookie Tài Khoản {O00OOOO0OOO00OO0O}{OOOOO0O0O00OOO0OO} {red}Die',end ='\r');sleep (3 );print ('                                     ',end ='\r')
+				O0O0O000O000OO000 .remove (O0OO0000OOO0OO0O0 )
+				continue 
+			O0O0OO0000000O00O =O0O00O0O0O0OO00OO .run (OOOOO0O0O00OOO0OO )
+			if O0O0OO0000000O00O ==True :
+				print (f'{O0OOO000OOOOO0000}Đang Cấu Hình ID FB:{O00OOOO0OOO00OO0O} {OOOOO0O0O00OOO0OO}{OOO00000O0O0O0000} | {luc}Tên FB: {vang}{OOOO0OOOOO00OOOOO}')
+			else :
+				print (f'{OOO00000O0O0O0000}Cấu Hình Thất Bại ID FB: {OOOOO0O0O00OOO0OO} | Tên FB: {OOOO0OOOOO00OOOOO} ',end ='\r')
+				continue 
+			O0000O00O0O00O000 =0 
+			while True :
+				OO0OO0OO000000O00 =1 if '1'in OOO0O00000O0OOOO0 else 0 
+				O000OOOOO0OO0OOOO =1 if '2'in OOO0O00000O0OOOO0 else 0 
+				O0O00OOOO0000O000 =1 if '1'in OOO0O00000O0OOOO0 else 0 
+				OO00O000000O00000 =1 if '3'in OOO0O00000O0OOOO0 else 0 
+				O00O00O000OOO00O0 =1 if '4'in OOO0O00000O0OOOO0 else 0 
+				OO00O0O0O00OO0000 =1 if '5'in OOO0O00000O0OOOO0 else 0 
+				O000O00OO0OOO0000 =1 if '6'in OOO0O00000O0OOOO0 else 0 
+				O0OO0000OOOOO0000 =1 if '7'in OOO0O00000O0OOOO0 else 0 
+				OO0OOOOOOO0O00000 =1 if '8'in OOO0O00000O0OOOO0 else 0 
+				OO000O0O0OO0000O0 =1 if '9'in OOO0O00000O0OOOO0 else 0 
+				if OO0OO0OO000000O00 ==1 :
+					O00000OOO0OO0OO0O =O0O00O0O0O0OO00OO .get_job ('like')
+					if O00000OOO0OO0OO0O ==False :
+						print ('Không Get Được Nhiệm Vụ Like              ',end ='\r');sleep (2 );print ('                                                        ',end ='\r')
+						OO0OO0OO000000O00 =0 
+					elif '"error":'in O00000OOO0OO0OO0O .text :
+						if O00000OOO0OO0OO0O .json ()['error']=='Thao tác quá nhanh vui lòng chậm lại':
+							O0OO0OO0O0OO00OOO =O00000OOO0OO0OO0O .json ()['countdown']
+							print (f'{OOO00000O0O0O0000}Đang Get Nhiệm Vụ Like, COUNTDOWN: {str(round(O0OO0OO0O0OO00OOO, 3))}              ',end ='\r');sleep (2 );print ('                                                       ',end ='\r')
+						else :
+							print (OOO00000O0O0O0000 +O00000OOO0OO0OO0O .json ()['error'],end ='\r')
+						OO0OO0OO000000O00 =0 
+					else :
+						O00000OOO0OO0OO0O =O00000OOO0OO0OO0O .json ()
+						if len (O00000OOO0OO0OO0O )==0 :
+							print (OOO00000O0O0O0000 +'Hết Nhiệm Vụ Like                             ',end ='\r');sleep (2 );print ('                                                        ',end ='\r')
+							OO0OO0OO000000O00 =0 
+						else :
+							print (f'{O0OOO000OOOOO0000}Tìm Thấy {O00OOOO0OOO00OO0O}{len(O00000OOO0OO0OO0O)} {luc}Nhiệm Vụ Like                       ',end ='\r')
+							for OOO0O00OO000O000O in O00000OOO0OO0OO0O :
+								OOOOO0O0O00OOO0OO =OOO0O00OO000O000O ['id']
+								O000O0O0O0OOO0O00 =O0O00000O0OO00000 .like (OOOOO0O0O00OOO0OO ,'LIKE')
+								if O000O0O0O0OOO0O00 ==False :
+									OO0O00OOOOO0OOO0O (OOOOO0O0O00OOO0OO ,'LIKE')
+									O0O0O00OOO0O0O0O0 +=1 
+								else :
+									O00O00000O000OO00 =O0O00O0O0O0OO00OO .nhan_xu ('LIKE',OOOOO0O0O00OOO0OO )
+									try :
+										OO00OOOO0O00O0O0O =O00O00000O000OO00 [1 ]
+										O000O00000O0OOO00 =O00O00000O000OO00 [0 ]
+										O0O00O0OO0O0OOOO0 +=1 
+										OO0O00OOOO0OOO0OO (O0O00O0OO0O0OOOO0 ,OOOOO0O0O00OOO0OO ,'LIKE',O000O00000O0OOO00 ,OO00OOOO0O00O0O0O )
+										O0O0O00OOO0O0O0O0 =0 
+										if O0O00O0OO0O0OOOO0 %O0OOO0OO0O0O0000O ==0 :
+											O0OOOOOO0000O00O0 (14 );print (f'{OO0O0000OOO00O0OO}Số Xu Hiện Tại: {O00OOOO0OOO00OO0O}{OO00OOOO0O00O0O0O} {OOO00000O0O0O0000}| {lam}Số Tài Khoản Facebook {vang}{len(O0O0O000O000OO000)}');O0OOOOOO0000O00O0 (14 );O0000O00O0O00O000 =1 ;break 
+										if O0O00O0OO0O0OOOO0 %OO00OO0OO0OO0O0OO ==0 :
+											OOOO0O00OOOO0O0O0 (O0O0O0OO000000000 )
+										else :
+											OOOO0OO0000000O00 (OOOO00OOO0O00O000 ,OO0O00O0O0000O0OO )
+									except :
+										OO0O00OOOOO0OOO0O (OOOOO0O0O00OOO0OO ,'LIKE')
+										O0O0O00OOO0O0O0O0 +=1 
+								if O0O0O00OOO0O0O0O0 >=10 :
+									OOOO000OO0O0000O0 =O0O00000O0OO00000 .get_thongtin ()
+									if OOOO000OO0O0000O0 ==0 :
+										print (f' {OOO00000O0O0O0000} Cookie Tài Khoản{O00OOOO0OOO00OO0O} {OOOO0OOOOO00OOOOO} {red}Đã Bị Out !!!                ')
+									else :
+										print (f' {OOO00000O0O0O0000}Tài Khoản{O00OOOO0OOO00OO0O} {OOOO0OOOOO00OOOOO} {red}Đã Bị Block Like !!!					')
+									O0O0O000O000OO000 .remove (O0OO0000OOO0OO0O0 )
+									O0000O00O0O00O000 =1 
+									break 
+				if O0000O00O0O00O000 ==1 :
+					break 
+				if O000OOOOO0OO0OOOO ==1 :
+					O00000OOO0OO0OO0O =O0O00O0O0O0OO00OO .get_job ('likevip')
+					if O00000OOO0OO0OO0O ==False :
+						print ('Không Get Được Nhiệm Vụ Like 2             ',end ='\r');sleep (2 );print ('                                                        ',end ='\r')
+						OO0OO0OO000000O00 =0 
+					elif '"error":'in O00000OOO0OO0OO0O .text :
+						if O00000OOO0OO0OO0O .json ()['error']=='Thao tác quá nhanh vui lòng chậm lại':
+							O0OO0OO0O0OO00OOO =O00000OOO0OO0OO0O .json ()['countdown']
+							print (f'{OOO00000O0O0O0000}Đang Get Nhiệm Vụ Like 2, COUNTDOWN: {str(round(O0OO0OO0O0OO00OOO, 3))}              ',end ='\r');sleep (2 );print ('                                                       ',end ='\r')
+						else :
+							print (OOO00000O0O0O0000 +O00000OOO0OO0OO0O .json ()['error'],end ='\r')
+						OO0OO0OO000000O00 =0 
+					else :
+						O00000OOO0OO0OO0O =O00000OOO0OO0OO0O .json ()
+						if len (O00000OOO0OO0OO0O )==0 :
+							print (OOO00000O0O0O0000 +'Hết Nhiệm Vụ Like 2                             ',end ='\r');sleep (2 );print ('                                                        ',end ='\r')
+							OO0OO0OO000000O00 =0 
+						else :
+							print (f'{O0OOO000OOOOO0000}Tìm Thấy {O00OOOO0OOO00OO0O}{len(O00000OOO0OO0OO0O)} {luc}Nhiệm Vụ Like 2                      ',end ='\r')
+							for OOO0O00OO000O000O in O00000OOO0OO0OO0O :
+								OOOOO0O0O00OOO0OO =OOO0O00OO000O000O ['id']
+								O000O0O0O0OOO0O00 =O0O00000O0OO00000 .like (OOOOO0O0O00OOO0OO ,'LIKE')
+								if O000O0O0O0OOO0O00 ==False :
+									OO0O00OOOOO0OOO0O (OOOOO0O0O00OOO0OO ,'LIKE 2')
+									O0O0O00OOO0O0O0O0 +=1 
+								else :
+									O00O00000O000OO00 =O0O00O0O0O0OO00OO .nhan_xu ('LIKEGIARE',OOOOO0O0O00OOO0OO )
+									try :
+										OO00OOOO0O00O0O0O =O00O00000O000OO00 [1 ]
+										O000O00000O0OOO00 =O00O00000O000OO00 [0 ]
+										O0O00O0OO0O0OOOO0 +=1 
+										OO0O00OOOO0OOO0OO (O0O00O0OO0O0OOOO0 ,OOOOO0O0O00OOO0OO ,'LIKE 2',O000O00000O0OOO00 ,OO00OOOO0O00O0O0O )
+										O0O0O00OOO0O0O0O0 =0 
+										if O0O00O0OO0O0OOOO0 %O0OOO0OO0O0O0000O ==0 :
+											O0OOOOOO0000O00O0 (14 );print (f'{OO0O0000OOO00O0OO}Số Xu Hiện Tại: {O00OOOO0OOO00OO0O}{OO00OOOO0O00O0O0O} {OOO00000O0O0O0000}| {lam}Số Tài Khoản Facebook {vang}{len(O0O0O000O000OO000)}');O0OOOOOO0000O00O0 (14 );O0000O00O0O00O000 =1 ;break 
+										if O0O00O0OO0O0OOOO0 %OO00OO0OO0OO0O0OO ==0 :
+											OOOO0O00OOOO0O0O0 (O0O0O0OO000000000 )
+										else :
+											OOOO0OO0000000O00 (OOOO00OOO0O00O000 ,OO0O00O0O0000O0OO )
+									except :
+										OO0O00OOOOO0OOO0O (OOOOO0O0O00OOO0OO ,'LIKE 2')
+										O0O0O00OOO0O0O0O0 +=1 
+								if O0O0O00OOO0O0O0O0 >=10 :
+									OOOO000OO0O0000O0 =O0O00000O0OO00000 .get_thongtin ()
+									if OOOO000OO0O0000O0 ==0 :
+										print (f' {OOO00000O0O0O0000} Cookie Tài Khoản{O00OOOO0OOO00OO0O} {OOOO0OOOOO00OOOOO} {red}Đã Bị Out !!!                ')
+									else :
+										print (f' {OOO00000O0O0O0000}Tài Khoản{O00OOOO0OOO00OO0O} {OOOO0OOOOO00OOOOO} {red}Đã Bị Block Like !!!					')
+									O0O0O000O000OO000 .remove (O0OO0000OOO0OO0O0 )
+									O0000O00O0O00O000 =1 
+									break 
+				if O0000O00O0O00O000 ==1 :
+					break 
+				if OO00O000000O00000 ==1 :
+					O000O000OO0O000OO =O0O00O0O0O0OO00OO .get_job ('comment')
+					if O000O000OO0O000OO ==False :
+						print ('Không Get Được Nhiệm Vụ Comment                     ',end ='\r');sleep (2 );print ('                                                        ',end ='\r')
+						OO00O000000O00000 =0 
+					elif '"error":'in O000O000OO0O000OO .text :
+						if O000O000OO0O000OO .json ()['error']=='Thao tác quá nhanh vui lòng chậm lại':
+							O0OO0OO0O0OO00OOO =O000O000OO0O000OO .json ()['countdown']
+							print (f'{OOO00000O0O0O0000}Đang Get Nhiệm Vụ Comment, COUNTDOWN: {str(round(O0OO0OO0O0OO00OOO, 3))}               ',end ='\r');sleep (2 );print ('                                                       ',end ='\r')
+						else :
+							print (OOO00000O0O0O0000 +O000O000OO0O000OO .json ()['error'],end ='\r')
+						OO00O000000O00000 =0 
+					else :
+						O000O000OO0O000OO =O000O000OO0O000OO .json ()
+						if len (O000O000OO0O000OO )==0 :
+							print (OOO00000O0O0O0000 +'Hết Nhiệm Vụ Comment                                 ',end ='\r');sleep (2 );print ('                                                        ',end ='\r')
+							OO00O000000O00000 =0 
+						else :
+							print (f'{O0OOO000OOOOO0000}Tìm Thấy{O00OOOO0OOO00OO0O} {len(O000O000OO0O000OO)} {luc}Nhiệm Vụ Comment                           ',end ='\r')
+							for OOO0O00OO000O000O in O000O000OO0O000OO :
+								OOOOO0O0O00OOO0OO =OOO0O00OO000O000O ['id']
+								O000O00000O0OOO00 =OOO0O00OO000O000O ['msg']
+								OOOOO000O00OOOOOO =O0O00000O0OO00000 .comment (OOOOO0O0O00OOO0OO ,O000O00000O0OOO00 )
+								if OOOOO000O00OOOOOO ==False :
+									OO0O00OOOOO0OOO0O (OOOOO0O0O00OOO0OO ,'COMMENT')
+									OO0O0O00OOOOO00OO +=1 
+								else :
+									O00O00000O000OO00 =O0O00O0O0O0OO00OO .nhan_xu ('COMMENT',OOOOO0O0O00OOO0OO )
+									try :
+										OO00OOOO0O00O0O0O =O00O00000O000OO00 [1 ]
+										O000O00000O0OOO00 =O00O00000O000OO00 [0 ]
+										O0O00O0OO0O0OOOO0 +=1 
+										OO0O00OOOO0OOO0OO (O0O00O0OO0O0OOOO0 ,OOOOO0O0O00OOO0OO ,'COMMENT',O000O00000O0OOO00 ,OO00OOOO0O00O0O0O )
+										OO0O0O00OOOOO00OO =0 
+										if O0O00O0OO0O0OOOO0 %O0OOO0OO0O0O0000O ==0 :
+											O0OOOOOO0000O00O0 (14 );print (f'{OO0O0000OOO00O0OO}Số Xu Hiện Tại: {O00OOOO0OOO00OO0O}{OO00OOOO0O00O0O0O} {OOO00000O0O0O0000}| {lam}Số Tài Khoản Facebook {vang}{len(O0O0O000O000OO000)}');O0OOOOOO0000O00O0 (14 );O0000O00O0O00O000 =1 ;break 
+										if O0O00O0OO0O0OOOO0 %OO00OO0OO0OO0O0OO ==0 :
+											OOOO0O00OOOO0O0O0 (O0O0O0OO000000000 )
+										else :
+											OOOO0OO0000000O00 (OOOO00OOO0O00O000 ,OO0O00O0O0000O0OO )
+									except :
+										OO0O00OOOOO0OOO0O (OOOOO0O0O00OOO0OO ,'COMMENT')
+										OO0O0O00OOOOO00OO +=1 
+								if OO0O0O00OOOOO00OO >=10 :
+									OOOO000OO0O0000O0 =O0O00000O0OO00000 .get_thongtin ()
+									if OOOO000OO0O0000O0 ==0 :
+										print (f' {OOO00000O0O0O0000} Cookie Tài Khoản{O00OOOO0OOO00OO0O} {OOOO0OOOOO00OOOOO} {red}Đã Bị Out !!!                ')
+									else :
+										print (f' {OOO00000O0O0O0000}Tài Khoản{O00OOOO0OOO00OO0O} {OOOO0OOOOO00OOOOO} {red}Đã Bị Block Comment !!!					')
+									O0O0O000O000OO000 .remove (O0OO0000OOO0OO0O0 )
+									O0000O00O0O00O000 =1 
+									break 
+				if O0000O00O0O00O000 ==1 :
+					break 
+				if O00O00O000OOO00O0 ==1 :
+					OO000O00O00OO00O0 =O0O00O0O0O0OO00OO .get_job ('share')
+					if OO000O00O00OO00O0 ==False :
+						print ('Không Get Được Nhiệm Vụ Share                       ',end ='\r');sleep (2 );print ('                                                        ',end ='\r')
+						O00O00O000OOO00O0 =0 
+					elif '"error":'in OO000O00O00OO00O0 .text :
+						if OO000O00O00OO00O0 .json ()['error']=='Thao tác quá nhanh vui lòng chậm lại':
+							O0OO0OO0O0OO00OOO =OO000O00O00OO00O0 .json ()['countdown']
+							print (f'{OOO00000O0O0O0000}Đang Get Nhiệm Vụ Share, COUNTDOWN: {str(round(O0OO0OO0O0OO00OOO, 3))}                ',end ='\r');sleep (2 );print ('                                                       ',end ='\r')
+						else :
+							print (OOO00000O0O0O0000 +OO000O00O00OO00O0 .json ()['error'],end ='\r')
+						O00O00O000OOO00O0 =0 
+					else :
+						OO000O00O00OO00O0 =OO000O00O00OO00O0 .json ()
+						if len (OO000O00O00OO00O0 )==0 :
+							print (OOO00000O0O0O0000 +'Hết Nhiệm Vụ Share ',end ='\r');sleep (2 );print ('                                                        ',end ='\r')
+							O00O00O000OOO00O0 =0 
+						else :
+							print (f'{O0OOO000OOOOO0000}Tìm Thấy{O00OOOO0OOO00OO0O} {len(OO000O00O00OO00O0)} {luc}Nhiệm Vụ Share                           ',end ='\r')
+							for OOO0O00OO000O000O in OO000O00O00OO00O0 :
+								OOOOO0O0O00OOO0OO =OOO0O00OO000O000O ['id']
+								OOO00OO0OO0OO000O =O0O00000O0OO00000 .share (OOOOO0O0O00OOO0OO ,'')
+								if OOO00OO0OO0OO000O ==False :
+									OO0O00OOOOO0OOO0O (OOOOO0O0O00OOO0OO ,'SHARE')
+									O00OOOO0OO0OO0000 +=1 
+								else :
+									O00O00000O000OO00 =O0O00O0O0O0OO00OO .nhan_xu ('SHARE',OOOOO0O0O00OOO0OO )
+									try :
+										OO00OOOO0O00O0O0O =O00O00000O000OO00 [1 ]
+										O000O00000O0OOO00 =O00O00000O000OO00 [0 ]
+										O0O00O0OO0O0OOOO0 +=1 
+										OO0O00OOOO0OOO0OO (O0O00O0OO0O0OOOO0 ,OOOOO0O0O00OOO0OO ,'SHARE',O000O00000O0OOO00 ,OO00OOOO0O00O0O0O )
+										O00OOOO0OO0OO0000 =0 
+										if O0O00O0OO0O0OOOO0 %O0OOO0OO0O0O0000O ==0 :
+											O0OOOOOO0000O00O0 (14 );print (f'{OO0O0000OOO00O0OO}Số Xu Hiện Tại: {O00OOOO0OOO00OO0O}{OO00OOOO0O00O0O0O} {OOO00000O0O0O0000}| {lam}Số Tài Khoản Facebook {vang}{len(O0O0O000O000OO000)}');O0OOOOOO0000O00O0 (14 );O0000O00O0O00O000 =1 ;break 
+										if O0O00O0OO0O0OOOO0 %OO00OO0OO0OO0O0OO ==0 :
+											OOOO0O00OOOO0O0O0 (O0O0O0OO000000000 )
+										else :
+											OOOO0OO0000000O00 (OOOO00OOO0O00O000 ,OO0O00O0O0000O0OO )
+									except :
+										OO0O00OOOOO0OOO0O (OOOOO0O0O00OOO0OO ,'SHARE')
+										O00OOOO0OO0OO0000 +=1 
+								if O00OOOO0OO0OO0000 >=10 :
+									OOOO000OO0O0000O0 =O0O00000O0OO00000 .get_thongtin ()
+									if OOOO000OO0O0000O0 ==0 :
+										print (f' {OOO00000O0O0O0000} Cookie Tài Khoản{O00OOOO0OOO00OO0O} {OOOO0OOOOO00OOOOO} {red}Đã Bị Out !!!                ')
+									else :
+										print (f' {OOO00000O0O0O0000}Tài Khoản{O00OOOO0OOO00OO0O} {OOOO0OOOOO00OOOOO} {red}Đã Bị Block Share !!!					')
+									O0O0O000O000OO000 .remove (O0OO0000OOO0OO0O0 )
+									O0000O00O0O00O000 =1 
+									break 
+				if O0000O00O0O00O000 ==1 :
+					break 
+				if OO00O0O0O00OO0000 ==1 :
+					OOO000O0OOOO00O00 =O0O00O0O0O0OO00OO .get_job ('reaction')
+					if OOO000O0OOOO00O00 ==False :
+						print ('Không Get Được Nhiệm Vụ Cảm Xúc                             ',end ='\r');sleep (2 );print ('                                                        ',end ='\r')
+						OO00O0O0O00OO0000 =0 
+					elif '"error":'in OOO000O0OOOO00O00 .text :
+						if OOO000O0OOOO00O00 .json ()['error']=='Thao tác quá nhanh vui lòng chậm lại':
+							O0OO0OO0O0OO00OOO =OOO000O0OOOO00O00 .json ()['countdown']
+							print (f'{OOO00000O0O0O0000}Đang Get Nhiệm Vụ Cảm Xúc, COUNTDOWN: {str(round(O0OO0OO0O0OO00OOO, 3))}                 ',end ='\r');sleep (2 );print ('                                                       ',end ='\r')
+						else :
+							print (OOO00000O0O0O0000 +OOO000O0OOOO00O00 .json ()['error'],end ='\r')
+						OO00O0O0O00OO0000 =0 
+					else :
+						OOO000O0OOOO00O00 =OOO000O0OOOO00O00 .json ()
+						if len (OOO000O0OOOO00O00 )==0 :
+							print (OOO00000O0O0O0000 +'Hết Nhiệm Vụ Cảm Xúc                                 ',end ='\r');sleep (2 );print ('                                                        ',end ='\r')
+							OO00O0O0O00OO0000 =0 
+						else :
+							print (f'{O0OOO000OOOOO0000}Tìm Thấy{O00OOOO0OOO00OO0O} {len(OOO000O0OOOO00O00)} {luc}Nhiệm Vụ Cảm Xúc                           ',end ='\r')
+							for OOO0O00OO000O000O in OOO000O0OOOO00O00 :
+								OOOOO0O0O00OOO0OO =OOO0O00OO000O000O ['id']
+								O000OO00O0O00O00O =OOO0O00OO000O000O ['type']
+								O0OO0O0000O00OOOO =O0O00000O0OO00000 .like (OOOOO0O0O00OOO0OO ,O000OO00O0O00O00O )
+								if O0OO0O0000O00OOOO ==False :
+									OO0O00OOOOO0OOO0O (OOOOO0O0O00OOO0OO ,O000OO00O0O00O00O )
+									O0O0O00OOO0O0O0O0 +=1 
+								else :
+									O00O00000O000OO00 =O0O00O0O0O0OO00OO .nhan_xu (O000OO00O0O00O00O ,OOOOO0O0O00OOO0OO )
+									try :
+										OO00OOOO0O00O0O0O =O00O00000O000OO00 [1 ]
+										O000O00000O0OOO00 =O00O00000O000OO00 [0 ]
+										O0O00O0OO0O0OOOO0 +=1 
+										OO0O00OOOO0OOO0OO (O0O00O0OO0O0OOOO0 ,OOOOO0O0O00OOO0OO ,O000OO00O0O00O00O ,O000O00000O0OOO00 ,OO00OOOO0O00O0O0O )
+										O0O0O00OOO0O0O0O0 =0 
+										if O0O00O0OO0O0OOOO0 %O0OOO0OO0O0O0000O ==0 :
+											O0OOOOOO0000O00O0 (14 );print (f'{OO0O0000OOO00O0OO}Số Xu Hiện Tại: {O00OOOO0OOO00OO0O}{OO00OOOO0O00O0O0O} {OOO00000O0O0O0000}| {lam}Số Tài Khoản Facebook {vang}{len(O0O0O000O000OO000)}');O0OOOOOO0000O00O0 (14 );O0000O00O0O00O000 =1 ;break 
+										if O0O00O0OO0O0OOOO0 %OO00OO0OO0OO0O0OO ==0 :
+											OOOO0O00OOOO0O0O0 (O0O0O0OO000000000 )
+										else :
+											OOOO0OO0000000O00 (OOOO00OOO0O00O000 ,OO0O00O0O0000O0OO )
+									except :
+										OO0O00OOOOO0OOO0O (OOOOO0O0O00OOO0OO ,O000OO00O0O00O00O )
+										O0O0O00OOO0O0O0O0 +=1 
+								if O0O0O00OOO0O0O0O0 >=10 :
+									OOOO000OO0O0000O0 =O0O00000O0OO00000 .get_thongtin ()
+									if OOOO000OO0O0000O0 ==0 :
+										print (f' {OOO00000O0O0O0000} Cookie Tài Khoản{O00OOOO0OOO00OO0O} {OOOO0OOOOO00OOOOO} {red}Đã Bị Out !!!                ')
+									else :
+										print (f' {OOO00000O0O0O0000}Tài Khoản{O00OOOO0OOO00OO0O} {OOOO0OOOOO00OOOOO} {red}Đã Bị Block Cảm Xúc !!!					')
+									O0O0O000O000OO000 .remove (O0OO0000OOO0OO0O0 )
+									O0000O00O0O00O000 =1 
+									break 
+				if O0000O00O0O00O000 ==1 :
+					break 
+				if O000O00OO0OOO0000 ==1 :
+					O0O00000O00OOO0O0 =O0O00O0O0O0OO00OO .get_job ('follow')
+					if O0O00000O00OOO0O0 ==False :
+						print ('Không Get Được Nhiệm Vụ Follow                      ',end ='\r');sleep (2 );print ('                                                        ',end ='\r')
+						O000O00OO0OOO0000 =0 
+						O0O00000O00OOO0O0 =[]
+					elif '"error":'in O0O00000O00OOO0O0 .text :
+						if O0O00000O00OOO0O0 .json ()['error']=='Thao tác quá nhanh vui lòng chậm lại':
+							O0OO0OO0O0OO00OOO =O0O00000O00OOO0O0 .json ()['countdown']
+							print (f'{OOO00000O0O0O0000}Đang Get Nhiệm Vụ Follow, COUNTDOWN: {str(round(O0OO0OO0O0OO00OOO, 3))}                     ',end ='\r');sleep (2 );print ('                                                       ',end ='\r')
+						else :
+							print (OOO00000O0O0O0000 +O0O00000O00OOO0O0 .json ()['error'],end ='\r')
+							sleep (2 )
+						O000O00OO0OOO0000 =0 
+						O0O00000O00OOO0O0 =[]
+					else :
+						O0O00000O00OOO0O0 =O0O00000O00OOO0O0 .json ()
+						if len (O0O00000O00OOO0O0 )==0 :
+							print (OOO00000O0O0O0000 +'Hết Nhiệm Vụ Follow                                    ',end ='\r');sleep (2 );print ('                                                        ',end ='\r')
+							O000O00OO0OOO0000 =0 
+						else :
+							print (f'{O0OOO000OOOOO0000}Tìm Thấy{O00OOOO0OOO00OO0O} {len(O0O00000O00OOO0O0)} {luc}Nhiệm Vụ Follow           ',end ='\r')
+							for OOO0O00OO000O000O in O0O00000O00OOO0O0 :
+								OOOOO0O0O00OOO0OO =OOO0O00OO000O000O ['id']
+								O00OOO00OO00O00O0 =O0O00000O0OO00000 .follow (OOOOO0O0O00OOO0OO )
+								if O00OOO00OO00O00O0 ==False :
+									OO0O00OOOOO0OOO0O (OOOOO0O0O00OOO0OO ,'FOLLOW')
+									O0O000O000000OO00 +=1 
+								else :
+									O00O00000O000OO00 =O0O00O0O0O0OO00OO .nhan_xu ('FOLLOW',OOOOO0O0O00OOO0OO )
+									try :
+										OO00OOOO0O00O0O0O =O00O00000O000OO00 [1 ]
+										O000O00000O0OOO00 =O00O00000O000OO00 [0 ]
+										O0O00O0OO0O0OOOO0 +=1 
+										OO0O00OOOO0OOO0OO (O0O00O0OO0O0OOOO0 ,OOOOO0O0O00OOO0OO ,'FOLLOW',O000O00000O0OOO00 ,OO00OOOO0O00O0O0O )
+										O0O000O000000OO00 =0 
+										if O0O00O0OO0O0OOOO0 %O0OOO0OO0O0O0000O ==0 :
+											O0OOOOOO0000O00O0 (14 );print (f'{OO0O0000OOO00O0OO}Số Xu Hiện Tại: {O00OOOO0OOO00OO0O}{OO00OOOO0O00O0O0O} {OOO00000O0O0O0000}| {lam}Số Tài Khoản Facebook {vang}{len(O0O0O000O000OO000)}');O0OOOOOO0000O00O0 (14 );O0000O00O0O00O000 =1 ;break 
+										if O0O00O0OO0O0OOOO0 %OO00OO0OO0OO0O0OO ==0 :
+											OOOO0O00OOOO0O0O0 (O0O0O0OO000000000 )
+										else :
+											OOOO0OO0000000O00 (OOOO00OOO0O00O000 ,OO0O00O0O0000O0OO )
+									except :
+										OO0O00OOOOO0OOO0O (OOOOO0O0O00OOO0OO ,'FOLLOW')
+										O0O000O000000OO00 +=1 
+								if O0O000O000000OO00 >=10 :
+									OOOO000OO0O0000O0 =O0O00000O0OO00000 .get_thongtin ()
+									if OOOO000OO0O0000O0 ==0 :
+										print (f' {OOO00000O0O0O0000} Cookie Tài Khoản{O00OOOO0OOO00OO0O} {OOOO0OOOOO00OOOOO} {red}Đã Bị Out !!!                ')
+									else :
+										print (f' {OOO00000O0O0O0000}Tài Khoản{O00OOOO0OOO00OO0O} {OOOO0OOOOO00OOOOO} {red}Đã Bị Block Follow !!!					')
+									O0O0O000O000OO000 .remove (O0OO0000OOO0OO0O0 )
+									O0000O00O0O00O000 =1 
+									break 
+				if O0000O00O0O00O000 ==1 :
+					break 
+				if O0OO0000OOOOO0000 ==1 :
+					OOO0000O00O0OO0OO =O0O00O0O0O0OO00OO .get_job ('page')
+					if OOO0000O00O0OO0OO ==False :
+						print ('Không Get Được Nhiệm Vụ Like Page                 ',end ='\r');sleep (2 );print ('                                                        ',end ='\r')
+						O0OO0000OOOOO0000 =0 
+						OOO0000O00O0OO0OO =[]
+					elif '"error":'in OOO0000O00O0OO0OO .text :
+						if OOO0000O00O0OO0OO .json ()['error']=='Thao tác quá nhanh vui lòng chậm lại':
+							O0OO0OO0O0OO00OOO =OOO0000O00O0OO0OO .json ()['countdown']
+							print (f'{OOO00000O0O0O0000}Đang Get Nhiệm Vụ Page, COUNTDOWN: {str(round(O0OO0OO0O0OO00OOO, 3))}                         ',end ='\r');sleep (2 );print ('                                                       ',end ='\r')
+						else :
+							print (OOO00000O0O0O0000 +OOO0000O00O0OO0OO .json ()['error'],end ='\r')
+						O0OO0000OOOOO0000 =0 
+						OOO0000O00O0OO0OO =[]
+					else :
+						OOO0000O00O0OO0OO =OOO0000O00O0OO0OO .json ()
+						if len (OOO0000O00O0OO0OO )==0 :
+							print (OOO00000O0O0O0000 +'Hết Nhiệm Vụ Like Page                                 ',end ='\r');sleep (2 );print ('                                                        ',end ='\r')
+							O0OO0000OOOOO0000 =0 
+						else :
+							print (f'{O0OOO000OOOOO0000}Tìm Thấy{O00OOOO0OOO00OO0O} {len(OOO0000O00O0OO0OO)} {luc}Nhiệm Vụ Like Page           ',end ='\r')
+							for OOO0O00OO000O000O in OOO0000O00O0OO0OO :
+								OOOOO0O0O00OOO0OO =OOO0O00OO000O000O ['id']
+								O00OO0000OOO0O00O =O0O00000O0OO00000 .page (OOOOO0O0O00OOO0OO )
+								if O00OO0000OOO0O00O ==False :
+									OO0O00OOOOO0OOO0O (OOOOO0O0O00OOO0OO ,'PAGE')
+									OO0OOO0000OO0O0OO +=1 
+								else :
+									O00O00000O000OO00 =O0O00O0O0O0OO00OO .nhan_xu ('PAGE',OOOOO0O0O00OOO0OO )
+									try :
+										OO00OOOO0O00O0O0O =O00O00000O000OO00 [1 ]
+										O000O00000O0OOO00 =O00O00000O000OO00 [0 ]
+										O0O00O0OO0O0OOOO0 +=1 
+										OO0O00OOOO0OOO0OO (O0O00O0OO0O0OOOO0 ,OOOOO0O0O00OOO0OO ,'PAGE',O000O00000O0OOO00 ,OO00OOOO0O00O0O0O )
+										OO0OOO0000OO0O0OO =0 
+										if O0O00O0OO0O0OOOO0 %O0OOO0OO0O0O0000O ==0 :
+											O0OOOOOO0000O00O0 (14 );print (f'{OO0O0000OOO00O0OO}Số Xu Hiện Tại: {O00OOOO0OOO00OO0O}{OO00OOOO0O00O0O0O} {OOO00000O0O0O0000}| {lam}Số Tài Khoản Facebook {vang}{len(O0O0O000O000OO000)}');O0OOOOOO0000O00O0 (14 );O0000O00O0O00O000 =1 ;break 
+										if O0O00O0OO0O0OOOO0 %OO00OO0OO0OO0O0OO ==0 :
+											OOOO0O00OOOO0O0O0 (O0O0O0OO000000000 )
+										else :
+											OOOO0OO0000000O00 (OOOO00OOO0O00O000 ,OO0O00O0O0000O0OO )
+									except :
+										OO0O00OOOOO0OOO0O (OOOOO0O0O00OOO0OO ,'PAGE')
+										OO0OOO0000OO0O0OO +=1 
+								if OO0OOO0000OO0O0OO >=10 :
+									OOOO000OO0O0000O0 =O0O00000O0OO00000 .get_thongtin ()
+									if OOOO000OO0O0000O0 ==0 :
+										print (f' {OOO00000O0O0O0000} Cookie Tài Khoản{O00OOOO0OOO00OO0O} {OOOO0OOOOO00OOOOO} {red}Đã Bị Out !!!                ')
+									else :
+										print (f' {OOO00000O0O0O0000}Tài Khoản{O00OOOO0OOO00OO0O} {OOOO0OOOOO00OOOOO} {red}Đã Bị Block Like Page !!!					')
+									O0O0O000O000OO000 .remove (O0OO0000OOO0OO0O0 )
+									O0000O00O0O00O000 =1 
+									break 
+				if O0000O00O0O00O000 ==1 :
+					break 
+				if OO0OOOOOOO0O00000 ==1 :
+					OOO0OO0O0O00OO0OO =O0O00O0O0O0OO00OO .get_job ('reactcmt')
+					if OOO0OO0O0O00OO0OO ==False :
+						print ('Không Get Được Nhiệm Vụ Cảm Xúc Comment ',end ='\r');sleep (2 );print ('                                                        ',end ='\r')
+						OO0OOOOOOO0O00000 =0 
+						OOO0OO0O0O00OO0OO =[]
+					elif '"error":'in OOO0OO0O0O00OO0OO .text :
+						if OOO0OO0O0O00OO0OO .json ()['error']=='Thao tác quá nhanh vui lòng chậm lại':
+							O0OO0OO0O0OO00OOO =OOO0OO0O0O00OO0OO .json ()['countdown']
+							print (f'{OOO00000O0O0O0000}Đang Get Nhiệm Vụ Cảm Xúc Comment, COUNTDOWN: {str(round(O0OO0OO0O0OO00OOO, 3))}                   ',end ='\r');sleep (2 );print ('                                                       ',end ='\r')
+						else :
+							print (OOO00000O0O0O0000 +OOO0OO0O0O00OO0OO .json ()['error'],end ='\r')
+						OO0OOOOOOO0O00000 =0 
+						OOO0OO0O0O00OO0OO =[]
+					else :
+						OOO0OO0O0O00OO0OO =OOO0OO0O0O00OO0OO .json ()
+						if len (OOO0OO0O0O00OO0OO )==0 :
+							print (OOO00000O0O0O0000 +'Hết Nhiệm Vụ Cảm Xúc Comment                       ',end ='\r');sleep (2 );print ('                                                        ',end ='\r')
+							OOO0OO0O0O00OO0OO =0 
+						else :
+							print (f'{O0OOO000OOOOO0000}Tìm Thấy{O00OOOO0OOO00OO0O} {len(OOO0OO0O0O00OO0OO)} {luc}Nhiệm Vụ Cảm Xúc Comment               ',end ='\r')
+							for OOO0O00OO000O000O in OOO0OO0O0O00OO0OO :
+								OOOOO0O0O00OOO0OO =OOO0O00OO000O000O ['id']
+								O000OO00O0O00O00O =OOO0O00OO000O000O ['type']
+								O00000O0000O0O0OO =O0O00000O0OO00000 .like (OOOOO0O0O00OOO0OO ,O000OO00O0O00O00O )
+								if O00000O0000O0O0OO ==False :
+									OO0O00OOOOO0OOO0O (OOOOO0O0O00OOO0OO ,O000OO00O0O00O00O +'CMT')
+									O00OO0OOO0O000O00 +=1 
+								else :
+									O00O00000O000OO00 =O0O00O0O0O0OO00OO .nhan_xu (O000OO00O0O00O00O +'CMT',OOOOO0O0O00OOO0OO )
+									try :
+										OO00OOOO0O00O0O0O =O00O00000O000OO00 [1 ]
+										O000O00000O0OOO00 =O00O00000O000OO00 [0 ]
+										O0O00O0OO0O0OOOO0 +=1 
+										OO0O00OOOO0OOO0OO (O0O00O0OO0O0OOOO0 ,OOOOO0O0O00OOO0OO ,O000OO00O0O00O00O +'CMT',O000O00000O0OOO00 ,OO00OOOO0O00O0O0O )
+										O00OO0OOO0O000O00 =0 
+										if O0O00O0OO0O0OOOO0 %O0OOO0OO0O0O0000O ==0 :
+											O0OOOOOO0000O00O0 (14 );print (f'{OO0O0000OOO00O0OO}Số Xu Hiện Tại: {O00OOOO0OOO00OO0O}{OO00OOOO0O00O0O0O} {OOO00000O0O0O0000}| {lam}Số Tài Khoản Facebook {vang}{len(O0O0O000O000OO000)}');O0OOOOOO0000O00O0 (14 );O0000O00O0O00O000 =1 ;break 
+										if O0O00O0OO0O0OOOO0 %OO00OO0OO0OO0O0OO ==0 :
+											OOOO0O00OOOO0O0O0 (O0O0O0OO000000000 )
+										else :
+											OOOO0OO0000000O00 (OOOO00OOO0O00O000 ,OO0O00O0O0000O0OO )
+									except :
+										OO0O00OOOOO0OOO0O (OOOOO0O0O00OOO0OO ,O000OO00O0O00O00O +'CMT')
+										O00OO0OOO0O000O00 +=1 
+								if O00OO0OOO0O000O00 >=10 :
+									OOOO000OO0O0000O0 =O0O00000O0OO00000 .get_thongtin ()
+									if OOOO000OO0O0000O0 ==0 :
+										print (f' {OOO00000O0O0O0000} Cookie Tài Khoản{O00OOOO0OOO00OO0O} {OOOO0OOOOO00OOOOO} {red}Đã Bị Out !!!                ')
+									else :
+										print (f' {OOO00000O0O0O0000}Tài Khoản{O00OOOO0OOO00OO0O} {OOOO0OOOOO00OOOOO} {red}Đã Bị Block Cảm Xúc CMT !!!					')
+									O0O0O000O000OO000 .remove (O0OO0000OOO0OO0O0 )
+									O0000O00O0O00O000 =1 
+									break 
+				if O0000O00O0O00O000 ==1 :
+					break 
+				if OO000O0O0OO0000O0 ==1 :
+					O0000O0OO0O0O0OO0 =O0O00O0O0O0OO00OO .get_job ('group')
+					if O0000O0OO0O0O0OO0 ==False :
+						print ('Không Get Được Nhiệm Vụ Group                               ',end ='\r');sleep (2 );print ('                                                        ',end ='\r')
+						OO000O0O0OO0000O0 =0 
+						O0000O0OO0O0O0OO0 =[]
+					elif '"error":'in O0000O0OO0O0O0OO0 .text :
+						if O0000O0OO0O0O0OO0 .json ()['error']=='Thao tác quá nhanh vui lòng chậm lại':
+							O0OO0OO0O0OO00OOO =O0000O0OO0O0O0OO0 .json ()['countdown']
+							print (f'{OOO00000O0O0O0000}Đang Get Nhiệm Vụ Group, COUNTDOWN: {str(round(O0OO0OO0O0OO00OOO, 3))}               ',end ='\r');sleep (2 );print ('                                                       ',end ='\r')
+						else :
+							print (OOO00000O0O0O0000 +O0000O0OO0O0O0OO0 .json ()['error'],end ='\r')
+						OO000O0O0OO0000O0 =0 
+						O0000O0OO0O0O0OO0 =[]
+					else :
+						O0000O0OO0O0O0OO0 =O0000O0OO0O0O0OO0 .json ()
+						if len (O0000O0OO0O0O0OO0 )==0 :
+							print (OOO00000O0O0O0000 +'Hết Nhiệm Vụ Group                                 ',end ='\r');sleep (2 );print ('                                                        ',end ='\r')
+							O0000O0OO0O0O0OO0 =0 
+						else :
+							print (f'{O0OOO000OOOOO0000}Tìm Thấy{O00OOOO0OOO00OO0O} {len(O0000O0OO0O0O0OO0)} {luc}Nhiệm Vụ Group           ',end ='\r')
+							for OOO0O00OO000O000O in O0000O0OO0O0O0OO0 :
+								OOOOO0O0O00OOO0OO =OOO0O00OO000O000O ['id']
+								O0O0O0O0OOOOOOOOO =O0O00000O0OO00000 .group (OOOOO0O0O00OOO0OO )
+								if O0O0O0O0OOOOOOOOO ==False :
+									OO0O00OOOOO0OOO0O (OOOOO0O0O00OOO0OO ,'GROUP')
+									OOO0000O00OOOO000 +=1 
+								else :
+									O00O00000O000OO00 =O0O00O0O0O0OO00OO .nhan_xu ('GROUP',OOOOO0O0O00OOO0OO )
+									try :
+										OO00OOOO0O00O0O0O =O00O00000O000OO00 [1 ]
+										O000O00000O0OOO00 =O00O00000O000OO00 [0 ]
+										O0O00O0OO0O0OOOO0 +=1 
+										OO0O00OOOO0OOO0OO (O0O00O0OO0O0OOOO0 ,OOOOO0O0O00OOO0OO ,'GROUP',O000O00000O0OOO00 ,OO00OOOO0O00O0O0O )
+										OOO0000O00OOOO000 =0 
+										if O0O00O0OO0O0OOOO0 %O0OOO0OO0O0O0000O ==0 :
+											O0OOOOOO0000O00O0 (14 );print (f'{OO0O0000OOO00O0OO}Số Xu Hiện Tại: {O00OOOO0OOO00OO0O}{OO00OOOO0O00O0O0O} {OOO00000O0O0O0000}| {lam}Số Tài Khoản Facebook {vang}{len(O0O0O000O000OO000)}');O0OOOOOO0000O00O0 (14 );O0000O00O0O00O000 =1 ;break 
+										if O0O00O0OO0O0OOOO0 %OO00OO0OO0OO0O0OO ==0 :
+											OOOO0O00OOOO0O0O0 (O0O0O0OO000000000 )
+										else :
+											OOOO0OO0000000O00 (OOOO00OOO0O00O000 ,OO0O00O0O0000O0OO )
+									except :
+										OO0O00OOOOO0OOO0O (OOOOO0O0O00OOO0OO ,'GROUP')
+										OOO0000O00OOOO000 +=1 
+								if OOO0000O00OOOO000 >=10 :
+									OOOO000OO0O0000O0 =O0O00000O0OO00000 .get_thongtin ()
+									if OOOO000OO0O0000O0 ==0 :
+										print (f' {OOO00000O0O0O0000} Cookie Tài Khoản{O00OOOO0OOO00OO0O} {OOOO0OOOOO00OOOOO} {red}Đã Bị Out !!!                ')
+									else :
+										print (f' {OOO00000O0O0O0000}Tài Khoản{O00OOOO0OOO00OO0O} {OOOO0OOOOO00OOOOO} {red}Đã Bị Block Join Group !!!					')
+									O0O0O000O000OO000 .remove (O0OO0000OOO0OO0O0 )
+									O0000O00O0O00O000 =1 
+									break 
+				if O0000O00O0O00O000 ==1 :
+					break 
+				if OO00O0O0O00OO0000 +OO000O0O0OO0000O0 +OO0OOOOOOO0O00000 +O0OO0000OOOOO0000 +O000O00OO0OOO0000 +O00O00O000OOO00O0 +OO00O000000O00000 +OO0OO0OO000000O00 ==0 :
+					for O0O00000O00OO0O00 in range (10 ,0 ,-1 ):
+						print (f'{O0O0OOO0O00OOOO00} Tất Cả Các Nhiệm Vụ Đã Hết, Vui Lòng Chờ {O0O00000O00OO0O00} Giây ',end ='\r');sleep (1 );print ('                                                        ',end ='\r')
+if __name__ =='__main__':
+	OOO00OOO0OO0OO00O ()
+class O000O0OO0000OOOOO :
+    def __init__ (O0000O00O00OO0OOO ):
+        O0000O00O00OO0OOO .__OOOOOO000OO0O0O0O ()
+        O0000O00O00OO0OOO .__OO0O0OO0O0O0OOOOO ()
+        O0000O00O00OO0OOO .__O00O0000000O0O0O0 ()
+        O0000O00O00OO0OOO .__O00OOO0O0O0OOO000 ()
+        O0000O00O00OO0OOO .__OOO00OOOOO000OO00 ()
+    def __OOOOOO000OO0O0O0O (O0000O00OOOOO00OO ,O000O00OO000O0O0O ,OO000O0O00000O00O ,O000OO000O000OO0O ,O00OOO0O0O0OOO0OO ,O0O0O0O00O00000OO ,OO0O0O0OO000000O0 ,OO0O00000O0O0O00O ):
+        return O0000O00OOOOO00OO .__O00O0000000O0O0O0 ()
+    def __OO0O0OO0O0O0OOOOO (OOO00O0OO0O00O00O ,OO0OOOOOO0O00OOOO ,OOOO0OO00O0OOOOOO ):
+        return OOO00O0OO0O00O00O .__O00O0000000O0O0O0 ()
+    def __O00O0000000O0O0O0 (O0OOOOO0O0O000OOO ,O000O00OOOO000O00 ):
+        return O0OOOOO0O0O000OOO .__OO0O0OO0O0O0OOOOO ()
+    def __O00OOO0O0O0OOO000 (OOO00OOO0000000O0 ,O00OOO0OOOO00OOO0 ,O0OOO0O000OOO0OO0 ,O000OO000OOO0O0OO ,O00O0OOO0O0OO0OOO ,O0O0OOO0000OOO0O0 ,O0000OOO00OOO0000 ):
+        return OOO00OOO0000000O0 .__OOO00OOOOO000OO00 ()
+    def __OOO00OOOOO000OO00 (OOOO0O0OOOOO0O0OO ,OO0O000OO0O0OO00O ,O000OO0OOO000OOO0 ,O00O00O0O0O00OOO0 ,OOO0O00000O00OO00 ,OO00O0OOO0O000O0O ,O0O0OOOOOOOO0O0O0 ,OOO00OO00O00OOOOO ):
+        return OOOO0O0OOOOO0O0OO .__O00OOO0O0O0OOO000 ()
+class OOO00OOO0OOOO00OO :
+    def __init__ (OO0000OO0O00O0000 ):
+        OO0000OO0O00O0000 .__O0OO000OO0OO00O0O ()
+        OO0000OO0O00O0000 .__O0000O0OOO0OOO000 ()
+        OO0000OO0O00O0000 .__OOO00OOO0000OOOO0 ()
+        OO0000OO0O00O0000 .__O0000000O000OO00O ()
+        OO0000OO0O00O0000 .__OOOO0OO00O000O000 ()
+        OO0000OO0O00O0000 .__OO0OOO0OOOOO0OO00 ()
+        OO0000OO0O00O0000 .__OO000O00O0OOO0000 ()
+        OO0000OO0O00O0000 .__OOO00O00OOOO0000O ()
+        OO0000OO0O00O0000 .__O00OO00OOOOOO00O0 ()
+        OO0000OO0O00O0000 .__O0OO0O0O000OO0O00 ()
+        OO0000OO0O00O0000 .__OOO0O000000OO0O00 ()
+        OO0000OO0O00O0000 .__O0O00OO00O0000O0O ()
+    def __O0OO000OO0OO00O0O (OOOO0OO000OOO0OO0 ,OO0OO000O000O0O0O ,O0O0OO0OOOO00O00O ,O00OOOO0O0OOO00O0 ,O0O00000OOO000000 ,OOO00000OOOO0OO00 ,O0OOOO0O0OOOOOOOO ):
+        return OOOO0OO000OOO0OO0 .__O00OO00OOOOOO00O0 ()
+    def __O0000O0OOO0OOO000 (O0O00000O00O000OO ,O0O000OOOOOO0000O ,OOO0O000O0OOOOO0O ,OO000OO0000O0OOO0 ,O0OOOO000OO000OOO ,O00O0O00O0O0O0O0O ):
+        return O0O00000O00O000OO .__O0000000O000OO00O ()
+    def __OOO00OOO0000OOOO0 (O0OOO0OO0O0OOO0OO ,OO00O0OO0OO0O0OOO ,O0O0OO00O00000000 ,OOOOO0OO00O0000OO ,OOOO00OOOO000O00O ):
+        return O0OOO0OO0O0OOO0OO .__O0O00OO00O0000O0O ()
+    def __O0000000O000OO00O (OOO0000OO0O000OO0 ,OO00O0OO0OOOO0OO0 ,OO00OO0O0OOOO000O ,O00000OO0000O0OOO ,OOO0OOOOOOO00O0O0 ,O0O0000O00OO0O0O0 ,OOOOOO0000OO0OOO0 ,O0O00O00000O0OO00 ):
+        return OOO0000OO0O000OO0 .__O0OO000OO0OO00O0O ()
+    def __OOOO0OO00O000O000 (O0OO0000O00O0O00O ,O000000OOOO0O00O0 ,OOOOO0OO00O000O00 ):
+        return O0OO0000O00O0O00O .__OO000O00O0OOO0000 ()
+    def __OO0OOO0OOOOO0OO00 (O0O00OOO00OO00O0O ,OO0O00O000O0O00O0 ,OO00O0OO00000O0OO ,OOOOOO000OOO000OO ,OOOOO0OO0O00O00OO ):
+        return O0O00OOO00OO00O0O .__OO0OOO0OOOOO0OO00 ()
+    def __OO000O00O0OOO0000 (OOO0OOO0O0O0OO0O0 ,OO0O0O0O0O0O0O00O ,OOO0O00OOO0O0OOO0 ,O0O0O000O0O0OO000 ):
+        return OOO0OOO0O0O0OO0O0 .__O0OO000OO0OO00O0O ()
+    def __OOO00O00OOOO0000O (OO00O0000O0OO000O ,OO00OOOO0000O00O0 ,O00O0O000O000O000 ,OO000O00OOOO00OO0 ,OOOOOOOOOO00O0O0O ,O00O000OO0OO0O0OO ,O0O0O0O0O0OOOOOO0 ,O000O0O0O0O0OO00O ):
+        return OO00O0000O0OO000O .__OO000O00O0OOO0000 ()
+    def __O00OO00OOOOOO00O0 (OO0O0OOO0O0O00OO0 ,O00O0O0OOO000OOOO ,O0OO0000O0OO0O00O ):
+        return OO0O0OOO0O0O00OO0 .__O0000O0OOO0OOO000 ()
+    def __O0OO0O0O000OO0O00 (O00O0OO00OO0O00O0 ,OOOO00O00000O000O ):
+        return O00O0OO00OO0O00O0 .__OOO0O000000OO0O00 ()
+    def __OOO0O000000OO0O00 (O00O00OOOOOO0O00O ,O00OO00OOO00OOO00 ,OOO0OO000O0O00OO0 ):
+        return O00O00OOOOOO0O00O .__OOO0O000000OO0O00 ()
+    def __O0O00OO00O0000O0O (OOO0O0O0OO0OO0O0O ,OOO0000OOOO0OOO00 ,O0OOO0000O00OO0O0 ,OOO00OO0O0O0OO00O ,OO00OO0O0O000OO0O ,OOO0OOO0OO0OOO0O0 ,O00000OO0O0OOOOOO ,OOO0OOO0OO0O0OO00 ):
+        return OOO0O0O0OO0OO0O0O .__OO0OOO0OOOOO0OO00 ()
+class O0O000OOOO0000OOO :
+    def __init__ (O000O0O00000O0000 ):
+        O000O0O00000O0000 .__O0000O0O0OO00OOO0 ()
+        O000O0O00000O0000 .__OOOO0O00O00O0OOOO ()
+        O000O0O00000O0000 .__OOO00OO0OO00000O0 ()
+        O000O0O00000O0000 .__OO000OO0OOO0O0O0O ()
+        O000O0O00000O0000 .__OOOO00O0OO000OO0O ()
+        O000O0O00000O0000 .__OOOOO000OO0O0O0O0 ()
+        O000O0O00000O0000 .__O0OO0000O00OO0OO0 ()
+        O000O0O00000O0000 .__O00OO00OOOOOO0OOO ()
+        O000O0O00000O0000 .__OOO00O0O0O0OO00O0 ()
+        O000O0O00000O0000 .__OO00O00OOO0OO0000 ()
+    def __O0000O0O0OO00OOO0 (O00OO0O00O0O0O0OO ,O0O00O00OO0000O00 ,O0OOOOO00OO0O0000 ,OOOO0OO0OO0000000 ,O0OO00O00OOO00OO0 ,O0OO0O000O0OOO00O ,OOOO00OOOOOOO0000 ):
+        return O00OO0O00O0O0O0OO .__OO00O00OOO0OO0000 ()
+    def __OOOO0O00O00O0OOOO (O0OO0OO000OO00OOO ,OOOOOO0O0OOO0OO00 ,O0O0O00OO0OO00O00 ,OOOO00OO0OOO0O000 ,O000O0O00OOO00OOO ,O0OOOOO00OOO0O0O0 ,OO00O00O0OOO0OOOO ):
+        return O0OO0OO000OO00OOO .__OOOO00O0OO000OO0O ()
+    def __OOO00OO0OO00000O0 (O00OOOO00O0O00O00 ,OOO0OO000O0O0000O ,O0OO00OOOO0OO0OOO ,OO00OO00O0OO0O00O ):
+        return O00OOOO00O0O00O00 .__OOOOO000OO0O0O0O0 ()
+    def __OO000OO0OOO0O0O0O (O000000O00OO00O00 ,OO0O000000O0O00OO ,O00000O0O00OO00OO ):
+        return O000000O00OO00O00 .__OOOO0O00O00O0OOOO ()
+    def __OOOO00O0OO000OO0O (OO0000O00O0O00OO0 ,O00O0000OO00OO0O0 ,OO00O00O0O0O000O0 ,OOOOO00OOOO0O0O0O ):
+        return OO0000O00O0O00OO0 .__O0OO0000O00OO0OO0 ()
+    def __OOOOO000OO0O0O0O0 (O00OOO0OOO0OOOOOO ,O0OOO00OOOOOOOOOO ,O000OOO00000O0O0O ,O000000OO00O000OO ,O0O000OOO00000OO0 ,O0O000OOO0OO00O00 ):
+        return O00OOO0OOO0OOOOOO .__OOOO0O00O00O0OOOO ()
+    def __O0OO0000O00OO0OO0 (OOOOOO0O00OO0OO0O ,O0OOOO0O0OOO0O000 ,O00O0OO00OO0000O0 ,O0OO00O0OOOO0OO00 ,OO0O00O0O0OOOO0OO ,O0OO0O00OO0O0O00O ):
+        return OOOOOO0O00OO0OO0O .__OO000OO0OOO0O0O0O ()
+    def __O00OO00OOOOOO0OOO (O0000000OO0O00OO0 ,O0OO00O00O00OOO0O ,OOO0OOO00OOOO000O ,OOOOOO0O0000O000O ):
+        return O0000000OO0O00OO0 .__OOO00O0O0O0OO00O0 ()
+    def __OOO00O0O0O0OO00O0 (OO0O00OOOO0OO0OOO ,O00O0OOO00OOOO000 ,O00OO0O0000O0O0O0 ,O00OO00OO0O0O00O0 ,O00OO0OOOO000OO0O ,O0OO00000O00OOO00 ,OOO0O0OO0000O0000 ):
+        return OO0O00OOOO0OO0OOO .__OOO00O0O0O0OO00O0 ()
+    def __OO00O00OOO0OO0000 (O0OO000OOO00OO00O ,O000OOO0OO0OO000O ,OOOOOOOO0O0000OO0 ,OO000O000OO000O00 ,O0O0O0000O0OOO00O ):
+        return O0OO000OOO00OO00O .__OOOO0O00O00O0OOOO ()
+class O0O0O0O00O0O00000 :
+    def __init__ (OO00OO0000OOOOOO0 ):
+        OO00OO0000OOOOOO0 .__OO000O00O0OO0O00O ()
+        OO00OO0000OOOOOO0 .__O0O0OOO0O0O0O00O0 ()
+        OO00OO0000OOOOOO0 .__O000O0OO0000O0OOO ()
+        OO00OO0000OOOOOO0 .__OOO0OO000OO00OOO0 ()
+        OO00OO0000OOOOOO0 .__O0000O0OO00O00000 ()
+        OO00OO0000OOOOOO0 .__OOO00OOOO00OO0OO0 ()
+        OO00OO0000OOOOOO0 .__O0OO0O000000O0O0O ()
+        OO00OO0000OOOOOO0 .__OOO00000OO0OOO0O0 ()
+        OO00OO0000OOOOOO0 .__OOOOO0O0O000OO00O ()
+        OO00OO0000OOOOOO0 .__OO00OO0O0000O0OOO ()
+        OO00OO0000OOOOOO0 .__OO0OO0OO000OO000O ()
+        OO00OO0000OOOOOO0 .__O0O0OOOO000O0O0OO ()
+        OO00OO0000OOOOOO0 .__O0O00O0OOO0O0OO00 ()
+        OO00OO0000OOOOOO0 .__O000O000O0O0O00OO ()
+        OO00OO0000OOOOOO0 .__O0OOO0O0000000OOO ()
+    def __OO000O00O0OO0O00O (O00OO00OOOOO00OO0 ,OOOOOOO00O000O00O ,O0000O00O0OOOOOO0 ,O00OOO0O0OOO0OOOO ,O0000000OOO0000O0 ,O00O0OO0OO0OOO00O ):
+        return O00OO00OOOOO00OO0 .__O000O0OO0000O0OOO ()
+    def __O0O0OOO0O0O0O00O0 (O0O00000OO00OO00O ,OO0O0OO000OOOO00O ,OOO0OO000O0O00O00 ,OOO0O0O0O0O000O00 ):
+        return O0O00000OO00OO00O .__O0O00O0OOO0O0OO00 ()
+    def __O000O0OO0000O0OOO (O00OOO0OOO0O0O000 ,O000O000OOO0O0O0O ,O00OO000OO0000O0O ):
+        return O00OOO0OOO0O0O000 .__OOO0OO000OO00OOO0 ()
+    def __OOO0OO000OO00OOO0 (OO0OOO00000000OO0 ,O0OOOO0O0OOO00O00 ,OO0OOOOOO0000O0O0 ,O000OO0OOOO0OOOO0 ,OOO0OO0OO000000O0 ,O00O0000O0O000O0O ,OO000O00O0000O000 ,OOO0OOOO00OO0OOOO ):
+        return OO0OOO00000000OO0 .__OO00OO0O0000O0OOO ()
+    def __O0000O0OO00O00000 (O00000O0O00O0O0O0 ,OOOOOO0000O00OOO0 ,OO0O000OO0OOO0O00 ,O0O0O00OOO00OO0O0 ,O000O0OOO000OOOO0 ,O00O0O0O0OO000OOO ,O0O0OOOOOO00OO0OO ,O000OO0O000O0OO00 ):
+        return O00000O0O00O0O0O0 .__O0OOO0O0000000OOO ()
+    def __OOO00OOOO00OO0OO0 (OO0000OO0000O0OOO ,OO000OOOO00OOOOO0 ,OOOO0O0O0O0OOOO0O ,O0OOOO0000O0O0000 ,O0O00O0O000OOO0O0 ):
+        return OO0000OO0000O0OOO .__O0OOO0O0000000OOO ()
+    def __O0OO0O000000O0O0O (OO0O0O000O000O000 ,OOOO0O00O0OOOOOO0 ,O0OO00O0O0O00O0O0 ,OOOOO0O0O0O0000OO ,OOOO00O0O00OOOOOO ,O00O0O0000O000O0O ,OOO0OOOOO0OOOO0O0 ):
+        return OO0O0O000O000O000 .__OOO0OO000OO00OOO0 ()
+    def __OOO00000OO0OOO0O0 (O00000OOOOO00OO0O ,OOOOO0000O0O0OO0O ,O00O00OO00O0OOOO0 ,OOO00O000OOOOOO0O ,O0OO0OOOO0O0O0O00 ):
+        return O00000OOOOO00OO0O .__OO00OO0O0000O0OOO ()
+    def __OOOOO0O0O000OO00O (OO0000O0OO0OOO0O0 ,O00O0000O0OOOOOO0 ):
+        return OO0000O0OO0OOO0O0 .__OOO00OOOO00OO0OO0 ()
+    def __OO00OO0O0000O0OOO (O0000OO0O00O000OO ,O0O0000O00O0OOOOO ,OO000OO00OOOO00O0 ,O0O0OO00O0O000O00 ,OO00OO000O000O0O0 ):
+        return O0000OO0O00O000OO .__OOO0OO000OO00OOO0 ()
+    def __OO0OO0OO000OO000O (OO00O0O0000000OOO ,O000O0O0000O0OO00 ,OOO0OOO00OO00OOO0 ,OO00OO00O0OOOOOOO ):
+        return OO00O0O0000000OOO .__O0O0OOO0O0O0O00O0 ()
+    def __O0O0OOOO000O0O0OO (OO00000000O0OO0OO ,O0O00O000O0O0O000 ,OO0O0OOOOOOO0000O ,OOOOO0000OOOOO0OO ,O0O00OOOO00O0OO0O ,O000O0O0000OOOOOO ,OOO0OO0OO00OOO00O ,O0OOOOOOOO0O0OO0O ):
+        return OO00000000O0OO0OO .__OOO00000OO0OOO0O0 ()
+    def __O0O00O0OOO0O0OO00 (OOO00O0O0OOO0OOOO ,O00OO0OO0OOO0O0OO ,OOOO0O00O00OO00O0 ,OOO0O00OO00O00OO0 ,O000O0OOOO0OO00OO ):
+        return OOO00O0O0OOO0OOOO .__O0O0OOOO000O0O0OO ()
+    def __O000O000O0O0O00OO (OOO00OOO00OOO0000 ,OOOOO000OO0OOOO0O ,O00O000O00OO00OO0 ,OOOO000OOOO0O0000 ,O0OO00OO000OO0OOO ,OOOO000000000000O ):
+        return OOO00OOO00OOO0000 .__O0000O0OO00O00000 ()
+    def __O0OOO0O0000000OOO (O00OO0OOO0O0O0O0O ,O00OOOO00000O0000 ,O0OOOO0OOO00OOO00 ,O0O0O0OO0OO00O000 ,O0OOOO0OO0OO0O00O ,OOOO0O0OOO00O000O ):
+        return O00OO0OOO0O0O0O0O .__OOO00OOOO00OO0OO0 ()
+class O0OO0O0OO000O0OO0 :
+    def __init__ (OO000OO0O00OO0OOO ):
+        OO000OO0O00OO0OOO .__O00000O000OO0O0OO ()
+        OO000OO0O00OO0OOO .__OOO00000O00OO00OO ()
+        OO000OO0O00OO0OOO .__O0O00OOO000OOO000 ()
+        OO000OO0O00OO0OOO .__O0000OOO00O0OOOOO ()
+        OO000OO0O00OO0OOO .__O00OO000O0O0OO00O ()
+        OO000OO0O00OO0OOO .__OOO0OOO00O0000000 ()
+        OO000OO0O00OO0OOO .__O0OOOO0O000O00OOO ()
+    def __O00000O000OO0O0OO (O0O00O00O0O000OOO ,O0OO0O0OOOOOOOO0O ):
+        return O0O00O00O0O000OOO .__O00000O000OO0O0OO ()
+    def __OOO00000O00OO00OO (OOOO00OO0O0O0OOOO ,O000O000000O00O00 ,OO00O0000O0OOOOOO ,O00O000O0O0O00OOO ):
+        return OOOO00OO0O0O0OOOO .__O00OO000O0O0OO00O ()
+    def __O0O00OOO000OOO000 (O0O00OO00OOOOOO00 ,OOO00O00O00O00O0O ,OOOO0OOOOOO00OO0O ,OO000O00OOO00OO00 ,OO0OO0O00O0OO0O00 ,OO0000O0O0O0O0O0O ,O00O000OO0O0O0OO0 ,O0OOO0OO00OO0O0OO ):
+        return O0O00OO00OOOOOO00 .__O0000OOO00O0OOOOO ()
+    def __O0000OOO00O0OOOOO (OOOO0O00000O0OOO0 ,OOO0000000OOOOO00 ,O000OOOOOO00000OO ,O000O0000O00OOO0O ,O0O0O000OOO0OO000 ,OOOOOOOOOOOO0OOOO ,OOOO0OOOOO0OOO0OO ,O0O0OOOO00OOO0OO0 ):
+        return OOOO0O00000O0OOO0 .__OOO0OOO00O0000000 ()
+    def __O00OO000O0O0OO00O (OO0OO0O00O0OOO00O ,OOO0O0000OO0OO000 ,O00000OOO00O0OOOO ,O0OO0O0000O0OOOO0 ):
+        return OO0OO0O00O0OOO00O .__O00000O000OO0O0OO ()
+    def __OOO0OOO00O0000000 (OO000OO00000OO000 ,O00000O000O00OOO0 ):
+        return OO000OO00000OO000 .__O0O00OOO000OOO000 ()
+    def __O0OOOO0O000O00OOO (OO0O00O000OO00OO0 ,OO00OO00OOO0OO00O ):
+        return OO0O00O000OO00OO0 .__O00000O000OO0O0OO ()
+class O00OO000OOO0OOOO0 :
+    def __init__ (O0O0000O0OO000O0O ):
+        O0O0000O0OO000O0O .__OO000O0O000OO0O0O ()
+        O0O0000O0OO000O0O .__O0O0OO00OOO00O0OO ()
+        O0O0000O0OO000O0O .__O0OO0O0O00O00OO00 ()
+        O0O0000O0OO000O0O .__OO000O00000O000OO ()
+        O0O0000O0OO000O0O .__O000O0OO0O0O0O000 ()
+        O0O0000O0OO000O0O .__OO00O0O0O000000OO ()
+        O0O0000O0OO000O0O .__O0O00OOOO0OOO0OOO ()
+        O0O0000O0OO000O0O .__OOOO0O00O0O00OOOO ()
+        O0O0000O0OO000O0O .__OOO0O00O0OOOOOOO0 ()
+        O0O0000O0OO000O0O .__OOOOOO0OO000OO0OO ()
+        O0O0000O0OO000O0O .__OO0OO0O0OOO0O0000 ()
+        O0O0000O0OO000O0O .__OOO00OO0O0O0O0000 ()
+        O0O0000O0OO000O0O .__O0OO00OO0O00OO00O ()
+        O0O0000O0OO000O0O .__OOO0OO0OO0OO00000 ()
+        O0O0000O0OO000O0O .__O000OOOO0O0OO0OO0 ()
+    def __OO000O0O000OO0O0O (OO0O0OO0000O0OO00 ,OOOO0O0OO00OOO0O0 ,OOO000000O0OO000O ,OOO0OOOO0O00O000O ,O00O0OOO00OOOO0OO ,OOO0OO000OO0000OO ,OO0OOO000O00OOOO0 ,O00O0OO00O000000O ):
+        return OO0O0OO0000O0OO00 .__OO000O00000O000OO ()
+    def __O0O0OO00OOO00O0OO (O0O0OO0000000O000 ,OO0O0OOOO000O0OOO ,OOO000OO000O0000O ,O000O000OOOOO0OOO ,OOO0O0OOO0OO0OOOO ,OOOO0O0O00O0000OO ):
+        return O0O0OO0000000O000 .__O0O00OOOO0OOO0OOO ()
+    def __O0OO0O0O00O00OO00 (O000O0000O000O00O ,O00O00OOOOO0OO00O ,O0OO000OO00OO0O0O ):
+        return O000O0000O000O00O .__O0OO00OO0O00OO00O ()
+    def __OO000O00000O000OO (OO0OOOOOO000OOOOO ,O00OO00000OO00OOO ,OO00OO0OOO0OO0O0O ):
+        return OO0OOOOOO000OOOOO .__O000O0OO0O0O0O000 ()
+    def __O000O0OO0O0O0O000 (OO00OOOOO0OOOO0OO ,OOOOOOOOO00O0O0OO ):
+        return OO00OOOOO0OOOO0OO .__O0OO00OO0O00OO00O ()
+    def __OO00O0O0O000000OO (O000O00OOOO00OOO0 ,OOO0O00O000OOOO00 ):
+        return O000O00OOOO00OOO0 .__O0OO0O0O00O00OO00 ()
+    def __O0O00OOOO0OOO0OOO (O0O0OOOO00O00O000 ,OOOO0O0OO000O00OO ,O0OOOO0OO0OOOO0O0 ,OOOO0O0000O0OOO00 ,OO0OO0O000O0OOOOO ,OO00O0O0O0OO00O00 ,O0O0O0O00OO0000OO ):
+        return O0O0OOOO00O00O000 .__O0OO0O0O00O00OO00 ()
+    def __OOOO0O00O0O00OOOO (OO0OOOOOO0000OO0O ,O0O00OOO00000O0OO ,O000OOOO00O00O000 ,O00O00OOOOOOOOO00 ,OOO000O0O0OOO000O ,O00OOO0O0000O00OO ,OO0000000OOO0000O ):
+        return OO0OOOOOO0000OO0O .__OO000O00000O000OO ()
+    def __OOO0O00O0OOOOOOO0 (OO0O00O0O00O0O0OO ,OO000O0O0O00O000O ,O0OOO0O00O0O0OOOO ,OOO0OO0O00000O000 ,OOOO0OO0O000000OO ,O0O0OO0O000OO00O0 ):
+        return OO0O00O0O00O0O0OO .__OOO00OO0O0O0O0000 ()
+    def __OOOOOO0OO000OO0OO (OO0OOOOO0OO000OO0 ,O000O0O0O0OOO0OO0 ,OOOO0OO0O0OOOOO00 ,O00OOOOOO0OO00OOO ,OO000O0O0O00OO0OO ,O0OO0O0000OO00000 ,O0OOO0O00000O0O00 ,OO0O0OO00OO00O00O ):
+        return OO0OOOOO0OO000OO0 .__O000OOOO0O0OO0OO0 ()
+    def __OO0OO0O0OOO0O0000 (OOO00O0000O0O00OO ,OO0000OO0OOO0O0OO ,O0O000O0O0OO00O0O ,O00OO00OOOOO0O0OO ,OOOOO0O0O0O00OO00 ,OO00O0OO0OO000OO0 ,O00O000OOO0000OOO ):
+        return OOO00O0000O0O00OO .__O0OO0O0O00O00OO00 ()
+    def __OOO00OO0O0O0O0000 (O0000O0O000O00OO0 ,O0O0000000O0OOO0O ,O0O000O0O0O00OO0O ,OO000OO0OO0000O00 ,O0O00OOOOO00OOOO0 ,OO0OOOO0OOO0O000O ):
+        return O0000O0O000O00OO0 .__OO000O0O000OO0O0O ()
+    def __O0OO00OO0O00OO00O (OO00O0OO0OOO00OOO ,OOOO00OOOOO0000OO ,O0OOO00O000OO0OO0 ,OOOO000OO0O000O00 ):
+        return OO00O0OO0OOO00OOO .__O0OO00OO0O00OO00O ()
+    def __OOO0OO0OO0OO00000 (OO0O0OOOOOOOO00OO ,OO000OOOOOO0O000O ,O000OO00O00O00O00 ):
+        return OO0O0OOOOOOOO00OO .__O0OO00OO0O00OO00O ()
+    def __O000OOOO0O0OO0OO0 (O0O0O000000OOOO0O ,O0O0O0O00000O0OOO ,OO00O00OO0O00OOOO ,O0O0O0OOOO0OO0O0O ,O0OO0OOO0OO00OOOO ):
+        return O0O0O000000OOOO0O .__OOOOOO0OO000OO0OO ()
+class OO0OO0O0O0O00O000 :
+    def __init__ (OOOO0O0OOO00OOO00 ):
+        OOOO0O0OOO00OOO00 .__OOOO0OOO000000O0O ()
+        OOOO0O0OOO00OOO00 .__OOO0OOO0O00O0000O ()
+        OOOO0O0OOO00OOO00 .__O000OO00OO0O00OO0 ()
+        OOOO0O0OOO00OOO00 .__O0OOOOOOO0O0OO00O ()
+        OOOO0O0OOO00OOO00 .__O0OO000OO0OO00OO0 ()
+        OOOO0O0OOO00OOO00 .__OO00OOO00O0000000 ()
+        OOOO0O0OOO00OOO00 .__O00000OO00O0OO0O0 ()
+        OOOO0O0OOO00OOO00 .__O000OOOOOOOO00O0O ()
+        OOOO0O0OOO00OOO00 .__OOOO000O00OO00OO0 ()
+        OOOO0O0OOO00OOO00 .__OO0OOO0OOOO0O0OO0 ()
+        OOOO0O0OOO00OOO00 .__O0OOO00OO0O000OOO ()
+        OOOO0O0OOO00OOO00 .__OO00000OO0OOO0O0O ()
+    def __OOOO0OOO000000O0O (O000O0OOO00O0OO00 ,O00O0O00000O000O0 ):
+        return O000O0OOO00O0OO00 .__O00000OO00O0OO0O0 ()
+    def __OOO0OOO0O00O0000O (OOO000O0O00O0O00O ,O0O0000OO0O0OO000 ,OOOO0O0O0OO00OOOO ):
+        return OOO000O0O00O0O00O .__O000OO00OO0O00OO0 ()
+    def __O000OO00OO0O00OO0 (OOOO0OOO0O00OOO00 ,O000OOOO00OOO00O0 ):
+        return OOOO0OOO0O00OOO00 .__O000OOOOOOOO00O0O ()
+    def __O0OOOOOOO0O0OO00O (O0OOOO0OO0O0O00OO ,O0OO0O0OOO00000O0 ,OO00OO00OO000O0O0 ,O0OO0OO00000000OO ,OOOOOO00000O00OO0 ,O00OOO0OO0O00O0O0 ,O00O000O000O000OO ):
+        return O0OOOO0OO0O0O00OO .__OO00000OO0OOO0O0O ()
+    def __O0OO000OO0OO00OO0 (OOOOO00000OO000OO ,OOO00O0000O0OOO00 ,OO0OOO00O0OOO0O00 ,OOO00O0OO0OO00000 ,OOOOOOO0O0000OO00 ,OOOOO0O0OO0O00O00 ,OO0OO0O0OO0O00OOO ):
+        return OOOOO00000OO000OO .__O000OO00OO0O00OO0 ()
+    def __OO00OOO00O0000000 (OO000O000O0OO00O0 ,O0O0O0OOO0OOOOO0O ,O0O00O0000OO0O00O ,O0OOO00O0O0000000 ,OO00OOOOOOO000000 ,OOO0000OOOO000OOO ,O0O0O0OOOO000000O ):
+        return OO000O000O0OO00O0 .__OOO0OOO0O00O0000O ()
+    def __O00000OO00O0OO0O0 (OOOO0OO0O0OOO000O ,OOOO0OOO00OOOO0O0 ,O000O0OO000OO000O ,O0OOOO0OOO00O0O00 ,OO0O000OO0O0O0O00 ,O0O0OOO0O0OO00OOO ,O0OOO000O0O00OO0O ):
+        return OOOO0OO0O0OOO000O .__O0OO000OO0OO00OO0 ()
+    def __O000OOOOOOOO00O0O (O0OOOO0O0OOOO000O ,O0OO0000O0O00O0OO ):
+        return O0OOOO0O0OOOO000O .__O000OOOOOOOO00O0O ()
+    def __OOOO000O00OO00OO0 (OO0O0O0O0OOO000O0 ,OOOOOOOO000OO000O ,OOO0O000OOO0O00O0 ,OO0O0O00OO0O000O0 ,OOOOO0O00O0O0O000 ,O000OO0OO0OOO0O00 ,OOOO000OO000OOO00 ):
+        return OO0O0O0O0OOO000O0 .__O0OOOOOOO0O0OO00O ()
+    def __OO0OOO0OOOO0O0OO0 (OOO000OO00O0OOOO0 ,O0O0O00OOO00000OO ,OO0O00O0O0O0OOO00 ):
+        return OOO000OO00O0OOOO0 .__O00000OO00O0OO0O0 ()
+    def __O0OOO00OO0O000OOO (OO00O000OOO00OOO0 ,OOO00O00O00O000O0 ,OO000O0OOOOOO00O0 ,O0000OO0O0O0O0000 ):
+        return OO00O000OOO00OOO0 .__OO00000OO0OOO0O0O ()
+    def __OO00000OO0OOO0O0O (O0000O00O00O0O0OO ,OOO0OO0OO00OOO0OO ,O0O00O0O000O00O0O ):
+        return O0000O00O00O0O0OO .__OOO0OOO0O00O0000O ()
+class OO0OOO0000O0O0000 :
+    def __init__ (OO0OO00O00000000O ):
+        OO0OO00O00000000O .__O0OO00OOOO0000000 ()
+        OO0OO00O00000000O .__O000O000OO0OOOOOO ()
+        OO0OO00O00000000O .__O0000OOOO0OO0O000 ()
+        OO0OO00O00000000O .__OOO00O0O0O00OOOO0 ()
+        OO0OO00O00000000O .__O0OO000OOO0O000OO ()
+        OO0OO00O00000000O .__OOO000O00O0OOOO0O ()
+        OO0OO00O00000000O .__OOOO0OOOO000000O0 ()
+        OO0OO00O00000000O .__OO0O000O000000OOO ()
+        OO0OO00O00000000O .__OOOO0O00OO00OO00O ()
+    def __O0OO00OOOO0000000 (O0O00OO0OOOO0O000 ,O00OOOO0OOOO0O000 ,OO000OO000O00OO0O ,O0OO0000OO00OOOOO ,OO0OOOO0OOOOO0OOO ,O0OO000OO0O0O0O00 ,O0O0000O00O0OO0O0 ):
+        return O0O00OO0OOOO0O000 .__O0OO000OOO0O000OO ()
+    def __O000O000OO0OOOOOO (OOOO0O0O0OOOO000O ,O000O000OOOO00O0O ,OOO0OOOOOOO000OOO ,OOO00O0OOO0000000 ,OO0O000O000O0OOO0 ,O0OOOOO0000O0O0O0 ,OO00OOO0O000OO0O0 ):
+        return OOOO0O0O0OOOO000O .__OOO00O0O0O00OOOO0 ()
+    def __O0000OOOO0OO0O000 (O0OO0O000OOOO0000 ,O0OO0O00OOOOOO0O0 ):
+        return O0OO0O000OOOO0000 .__O0OO000OOO0O000OO ()
+    def __OOO00O0O0O00OOOO0 (OOO000OO00OOOO0O0 ,OO00O00OOO00O000O ,O0O000O0O0O0OOOOO ,O0OOO0OO0OO0OO00O ,OO000OO0O0O0O0O00 ,O000O000000O00000 ,O00OO000O00O0O000 ,O0OOO000O0000000O ):
+        return OOO000OO00OOOO0O0 .__OOOO0O00OO00OO00O ()
+    def __O0OO000OOO0O000OO (OOOO00O0OOOO0OO00 ,O0O0O0O0OO000O00O ):
+        return OOOO00O0OOOO0OO00 .__OOOO0OOOO000000O0 ()
+    def __OOO000O00O0OOOO0O (O000000O00O00O000 ,O000OOO000O0O0000 ,O00O000O0O00OOOO0 ,OO0OOO0O00O0OO0O0 ):
+        return O000000O00O00O000 .__OOOO0O00OO00OO00O ()
+    def __OOOO0OOOO000000O0 (OO0O0O0O00000OO00 ,OOOO00OO000OOOO0O ,OOOO0O0O0O00O0O00 ,OO00O0OOO00OO0000 ):
+        return OO0O0O0O00000OO00 .__O0OO000OOO0O000OO ()
+    def __OO0O000O000000OOO (O00OO000OO0O0OO00 ,OO0000O0OO00O0OO0 ,OOO0O0000OOOO0O00 ,O0000OO00OO000O0O ,OO00000O00O00OO0O ,O00000O0O0OO0O00O ):
+        return O00OO000OO0O0OO00 .__O0OO000OOO0O000OO ()
+    def __OOOO0O00OO00OO00O (OO0OOO0O0OO0000O0 ,OO000O00OOO0O0O00 ,O000OO000OO00OOO0 ,OOO0OOOOO00OO0OO0 ,OOO00000O0OO0OOOO ,O00000OOO000O0000 ,O00OOO0OO0OOOOOOO ):
+        return OO0OOO0O0OO0000O0 .__OOOO0O00OO00OO00O ()
